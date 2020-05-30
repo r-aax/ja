@@ -1,0 +1,66 @@
+/*
+ * CSS стили.
+ */
+
+/* Основной стиль. */
+body, table, tr, td, hr, iframe
+{
+    color : #000000;
+    font-family : verdana, sans-serif;
+    font-size : 10pt;
+    margin : 0px 0px 0px 0px;
+    padding : 0px 0px 0px 0px;
+    border-spacing : 0px
+}
+
+/* Увеличенный шрифт. */
+font.big-font
+{
+    font-size : 12pt;
+    font-weight : 900
+}
+
+/* Без границ. */
+iframe
+{
+    border : none
+}
+
+/* Максимальный размер элементов. */
+table.sketch, iframe
+{
+    width : 100%;
+    height : 100%
+}
+
+/* HR. */
+hr
+{
+    width : 100%;
+    border-style : solid;
+    border-color : silver
+}
+
+/* Ссылки. */
+a
+{
+    color : steelblue;
+    text-decoration : none
+}
+a:hover
+{
+    color : steelblue;
+    text-decoration : underline
+}
+
+/* Изображения. */
+img
+{
+    border : none
+}
+
+/* Цвета. */
+td.dddddd
+{
+    background-color : #DDDDDD
+}
