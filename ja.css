@@ -6,15 +6,17 @@
 body, table, tr, td, hr, iframe
 {
     color : #000000;
-    font-family : verdana, sans-serif;
-    font-size : 10pt;
+    font-family : Times New Roman, verdana, sans-serif;
+    font-size : 14pt;
+    margin : 5px 5px 5px 5px;
+    padding : 5px 5px 5px 5px;
     border-spacing : 2px
 }
 
 /* Увеличенный шрифт. */
 font.big-font
 {
-    font-size : 12pt;
+    font-size : 16pt;
     font-weight : 900
 }
 
