@@ -8,9 +8,7 @@ body, table, tr, td, hr, iframe
     color : #000000;
     font-family : verdana, sans-serif;
     font-size : 10pt;
-    margin : 0px 0px 0px 0px;
-    padding : 0px 0px 0px 0px;
-    border-spacing : 0px
+    border-spacing : 2px
 }
 
 /* Увеличенный шрифт. */

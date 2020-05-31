@@ -17,7 +17,146 @@ JA
     <script type="text/javascript" language="JavaScript" src="./data/pfi_gan/data.js"></script>
 </head>
 
-<body onLoad="">
+<script type="text/javascript" language="JavaScript">
+<!--
+// Построение дерева из данных результатов исследований.
+function construct_ftree(data)
+{
+    var root = new Tree("root", "", "Корень");
+
+    for (var sc_i = 0; sc_i < data.length; sc_i++)
+    {
+        var sc = data[sc_i];
+        var sc_t = new Tree("science", "", sc.Str);
+
+        root.AddChild(sc_t);
+
+        for (var dr_i = 0; dr_i < sc.Sub.length; dr_i++)
+        {
+            var dr = sc.Sub[dr_i];
+            var dr_t = new Tree("direction", "", dr.Str);
+
+            sc_t.AddChild(dr_t);
+
+            for (var ar_i = 0; ar_i < dr.Sub.length; ar_i++)
+            {
+                var ar = dr.Sub[ar_i];
+                var ar_t = new Tree("area", "", ar.Str);
+
+                dr_t.AddChild(ar_t);
+
+                for (var rs_i = 0; rs_i < ar.Sub.length; rs_i++)
+                {
+                    var rs = ar.Sub[rs_i];
+                    var rs_t = new Tree("result", "", rs.Str);
+
+                    // Установка метки.
+                    if (sc.Mark > 0)
+                    {
+                        rs_t.Mark = sc.Mark;
+                    }
+                    else if (dr.Mark > 0)
+                    {
+                        rs_t.Mark = dr.Mark;
+                    }
+                    else if (ar.Mark > 0)
+                    {
+                        rs_t.Mark = ar.Mark;
+                    }
+                    else
+                    {
+                        rs_t.Mark = rs.Mark;
+                    }
+
+                    ar_t.AddChild(rs_t);
+                }
+            }
+        }
+    }
+
+    return root;
+}
+
+// Построение HTML по дереву.
+function construct_results_table_HTML(t)
+{
+    var s = "<table width=\"100%\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\" " +
+            "style=\"border-style : hidden; background-color : #DDDDDD\">";
+
+    for (var sc_i = 0; sc_i < t.ChildrenCount(); sc_i++)
+    {
+        var sc = t.Child(sc_i);
+
+        for (var dr_i = 0; dr_i < sc.ChildrenCount(); dr_i++)
+        {
+            var dr = sc.Child(dr_i);
+
+            for (var ar_i = 0; ar_i < dr.ChildrenCount(); ar_i++)
+            {
+                var ar = dr.Child(ar_i);
+
+                for (var rs_i = 0; rs_i < ar.ChildrenCount(); rs_i++)
+                {
+                    var rs = ar.Child(rs_i);
+
+                    sc_str = ((dr_i == 0) && (ar_i == 0) && (rs_i == 0)) ? sc.Description : "&nbsp;";
+                    dr_str = ((ar_i == 0) && (rs_i == 0)) ? dr.Description : "&nbsp;";
+                    ar_str = (rs_i == 0) ? ar.Description : "&nbsp;";
+                    rs_str = rs.Description;
+
+                    var col_str = "";
+                    switch (rs.Mark)
+                    {
+                        case 0:
+                            col_str = "#FFFFFF";
+                            break;
+
+                        case 1:
+                            col_str = "lightcoral";
+                            break;
+
+                        case 2:
+                            col_str = "palegoldenrod";
+                            break;
+
+                        case 3:
+                            col_str = "lightgreen";
+                            break;
+
+                        default:
+                            alert("Error : unknown mark (and color).")
+                            break;
+                    }
+
+                    s = s + 
+                        "<tr>" +
+                        "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + sc_str + "</td>" +
+                        "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + dr_str + "</td>" +
+                        "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + ar_str + "</td>" +
+                        "<td style=\"background-color : " + col_str + "\" valign=\"top\">" + rs_str + "</td>" +
+                        "</tr>";
+                }
+            }
+        }
+    }
+
+    s = s + "</table>";
+
+    return s;
+}
+
+// Загрузка контента.
+function on_load()
+{
+    var t = construct_ftree(pfi_gan_data());
+    var html = construct_results_table_HTML(t);
+
+    document.getElementById("pfi_gan_div").innerHTML = html;
+}
+-->
+</script>
+
+<body onload="on_load()">
 
     <!-- Основная таблица. -->
     <table class="sketch">
