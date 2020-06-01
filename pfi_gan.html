@@ -82,6 +82,7 @@ function construct_results_table_HTML(t)
 {
     var s = "<table width=\"100%\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\" " +
             "style=\"border-style : hidden; background-color : #DDDDDD\">";
+    var total_res_counter = 1;
 
     for (var sc_i = 0; sc_i < t.ChildrenCount(); sc_i++)
     {
@@ -108,19 +109,28 @@ function construct_results_table_HTML(t)
                     switch (rs.Mark)
                     {
                         case 0:
+                            // Не принято никакого решения по поводу результата.
                             col_str = "#FFFFFF";
                             break;
 
-                        case 1:
-                            col_str = "#EEEEEE";
+                        case 2:
+                            // Результат подходит.
+                            col_str = "lightgreen";
                             break;
 
-                        case 2:
+                        case 4:
+                            // Результат возможно подходит.
                             col_str = "lightsteelblue";
                             break;
 
-                        case 3:
-                            col_str = "lightgreen";
+                        case 6:
+                            // Результат не подходит.
+                            col_str = "#EEEEEE";
+                            break;
+
+                        case 8:
+                            // Результат настолько не подходит, что не надо показывать.
+                            col_str = "#EEEEEE";
                             break;
 
                         default:
@@ -128,13 +138,20 @@ function construct_results_table_HTML(t)
                             break;
                     }
 
+                    if (rs.Mark == 8)
+                    {
+                        continue;
+                    }
+
                     s = s + 
                         "<tr>" +
                         "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + sc_str + "</td>" +
                         "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + dr_str + "</td>" +
                         "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + ar_str + "</td>" +
-                        "<td style=\"background-color : " + col_str + "; width : 100\%\" valign=\"top\">" + rs_str + "</td>" +
-                        "</tr>";
+                        "<td style=\"background-color : " + col_str + "; width : 100\%\" valign=\"top\">" +
+                        rs_str + " [" + total_res_counter + "]" +
+                        "</td>" + "</tr>";
+                    total_res_counter = total_res_counter + 1;
                 }
             }
         }
