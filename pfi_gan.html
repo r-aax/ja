@@ -80,9 +80,19 @@ function construct_ftree(data)
 // Построение HTML по дереву.
 function construct_results_table_HTML(t)
 {
-    var s = "<table width=\"100%\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\" " +
-            "style=\"border-style : hidden; background-color : #DDDDDD\">";
+    var col_yes = "lightgreen";
+    var col_maybe = "lightsteelblue";
+    var col_no = "#EEEEEE";
+    var s = "<center>" +
+            " Цвета соответствия результатов суперкомпьютерным технологиям: " +
+            "<font style=\"background-color : " + col_yes + "\">Да</font>" + ", " + 
+            "<font style=\"background-color : " + col_maybe + "\">Возможно</font>" + ", " + 
+            "<font style=\"background-color : " + col_no + "\">Нет</font>" +
+            "</center>";
+    var s = s + "<table width=\"100%\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\" " +
+            "   style=\"border-style : hidden; background-color : #DDDDDD\">";
     var total_res_counter = 1;
+    var id = 1;
 
     for (var sc_i = 0; sc_i < t.ChildrenCount(); sc_i++)
     {
@@ -115,17 +125,17 @@ function construct_results_table_HTML(t)
 
                         case 2:
                             // Результат подходит.
-                            col_str = "lightgreen";
+                            col_str = col_yes;
                             break;
 
                         case 4:
                             // Результат возможно подходит.
-                            col_str = "lightsteelblue";
+                            col_str = col_maybe;
                             break;
 
                         case 6:
                             // Результат не подходит.
-                            col_str = "#EEEEEE";
+                            col_str = col_no;
                             break;
 
                         case 8:
@@ -138,26 +148,27 @@ function construct_results_table_HTML(t)
                             break;
                     }
 
-                    if (rs.Mark == 8)
+                    if (rs.Mark != 8)
                     {
-                        continue;
+                        s = s + 
+                            "<tr>" +
+                            "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + sc_str + "</td>" +
+                            "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + dr_str + "</td>" +
+                            "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + ar_str + "</td>" +
+                            "<td style=\"background-color : " + col_str + "; width : 100\%\" valign=\"top\">" +
+                            rs_str + " [" + id + "]" +
+                            "</td>" + "</tr>";
+                        id = id + 1;
                     }
 
-                    s = s + 
-                        "<tr>" +
-                        "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + sc_str + "</td>" +
-                        "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + dr_str + "</td>" +
-                        "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + ar_str + "</td>" +
-                        "<td style=\"background-color : " + col_str + "; width : 100\%\" valign=\"top\">" +
-                        rs_str + " [" + total_res_counter + "]" +
-                        "</td>" + "</tr>";
-                    total_res_counter = total_res_counter + 1;
+                        total_res_counter = total_res_counter + 1;
                 }
             }
         }
     }
 
     s = s + "</table>";
+    s = s + "<center>Общее количество результатов : " + (total_res_counter - 1) + "</center>"
 
     return s;
 }
