@@ -92,27 +92,30 @@ function construct_results_table_HTML(t)
     var s = s + "<table width=\"100%\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\" " +
             "   style=\"border-style : hidden; background-color : #DDDDDD\">";
     var total_res_counter = 1;
-    var id = 1;
+    var shown_res_counter = 1;
 
     for (var sc_i = 0; sc_i < t.ChildrenCount(); sc_i++)
     {
         var sc = t.Child(sc_i);
+        var is_sc_show = true;
 
         for (var dr_i = 0; dr_i < sc.ChildrenCount(); dr_i++)
         {
             var dr = sc.Child(dr_i);
+            var is_dr_show = true;
 
             for (var ar_i = 0; ar_i < dr.ChildrenCount(); ar_i++)
             {
                 var ar = dr.Child(ar_i);
+                var is_ar_show = true;
 
                 for (var rs_i = 0; rs_i < ar.ChildrenCount(); rs_i++)
                 {
                     var rs = ar.Child(rs_i);
 
-                    sc_str = ((dr_i == 0) && (ar_i == 0) && (rs_i == 0)) ? sc.Description : "&nbsp;";
-                    dr_str = ((ar_i == 0) && (rs_i == 0)) ? dr.Description : "&nbsp;";
-                    ar_str = (rs_i == 0) ? ar.Description : "&nbsp;";
+                    sc_str = is_sc_show ? sc.Description : "&nbsp;";
+                    dr_str = is_dr_show ? dr.Description : "&nbsp;";
+                    ar_str = is_ar_show ? ar.Description : "&nbsp;";
                     rs_str = rs.Description;
 
                     var col_str = "";
@@ -148,6 +151,7 @@ function construct_results_table_HTML(t)
                             break;
                     }
 
+                    //if ((rs.Mark == 2) || (rs.Mark == 4))
                     if (rs.Mark != 8)
                     {
                         s = s + 
@@ -156,19 +160,26 @@ function construct_results_table_HTML(t)
                             "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + dr_str + "</td>" +
                             "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + ar_str + "</td>" +
                             "<td style=\"background-color : " + col_str + "; width : 100\%\" valign=\"top\">" +
-                            rs_str + " [" + id + "]" +
+                            rs_str + " [" + total_res_counter + "]" +
                             "</td>" + "</tr>";
-                        id = id + 1;
+                        shown_res_counter = shown_res_counter + 1;
+
+                        // Сбрасываем названия науки, направления и области.
+                        is_sc_show = false;
+                        is_dr_show = false;
+                        is_ar_show = false;
                     }
 
-                        total_res_counter = total_res_counter + 1;
+                    total_res_counter = total_res_counter + 1;
                 }
             }
         }
     }
 
     s = s + "</table>";
-    s = s + "<center>Общее количество результатов : " + (total_res_counter - 1) + "</center>"
+    s = s + "<center>Показано результатов : " +
+            (shown_res_counter - 1) + " из " +
+            (total_res_counter - 1) + "</center>"
 
     return s;
 }
