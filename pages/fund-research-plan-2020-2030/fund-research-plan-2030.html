@@ -1,0 +1,172 @@
+<!--
+JA
+-->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="content-style-type" content="text/css">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link rel="stylesheet" href="style.css" type="text/css" title="default" media="screen">
+    <title>План фундаментальных научных исследований на 2020 - 2030 годы</title>
+    <script type="text/javascript" language="JavaScript" src="../../js/ftree.js"></script>
+    <script type="text/javascript" language="JavaScript" src="data.js"></script>
+</head>
+
+<script type="text/javascript" language="JavaScript">
+<!--
+// Построение дерева из данных результатов исследований.
+
+function construct_ftree(data)
+{
+    var root = new Tree("root", "", "Корень");
+
+    for (var sc_i = 0; sc_i < data.length; sc_i++)
+    {
+        var sc = data[sc_i];
+        var sc_t = new Tree("science", "", sc.Str);
+
+        root.AddChild(sc_t);
+
+        for (var ar_i = 0; ar_i < sc.Sub.length; ar_i++)
+        {
+            var ar = sc.Sub[ar_i];
+            var ar_t = new Tree("area", "", ar.Str);
+
+            sc_t.AddChild(ar_t);
+
+            for (var dr_i = 0; dr_i < ar.Sub.length; dr_i++)
+            {
+                var dr = ar.Sub[dr_i];
+                var dr_t = new Tree("direction", "", dr.Str);
+
+                ar_t.AddChild(dr_t);
+
+                for (var rs_i = 0; rs_i < dr.Sub.length; rs_i++)
+                {
+                    var rs = dr.Sub[rs_i];
+                    var rs_t = new Tree("research", "", rs.Str);
+
+                    // Установка метки.
+                    if (sc.Mark > 0)
+                    {
+                        rs_t.Mark = sc.Mark;
+                    }
+                    else if (ar.Mark > 0)
+                    {
+                        rs_t.Mark = ar.Mark;
+                    }
+                    else if (dr.Mark > 0)
+                    {
+                        rs_t.Mark = dr.Mark;
+                    }
+                    else
+                    {
+                        rs_t.Mark = rs.Mark;
+                    }
+
+                    dr_t.AddChild(rs_t);
+                }
+            }
+        }
+    }
+
+    return root;
+}
+
+// Построение HTML по дереву.
+function construct_results_table_HTML(t)
+{
+    var s = "<table width=\"100%\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\" " +
+            "style=\"border-style : hidden; background-color : #DDDDDD\">";
+
+    for (var sc_i = 0; sc_i < t.ChildrenCount(); sc_i++)
+    {
+        var sc = t.Child(sc_i);
+        var is_sc_show = true;
+
+        for (var ar_i = 0; ar_i < sc.ChildrenCount(); ar_i++)
+        {
+            var ar = sc.Child(ar_i);
+            var is_ar_show = true;
+
+            for (var dr_i = 0; dr_i < ar.ChildrenCount(); dr_i++)
+            {
+                var dr = ar.Child(dr_i);
+                var is_dr_show = true;
+
+                for (var rs_i = 0; rs_i < dr.ChildrenCount(); rs_i++)
+                {
+                    var rs = dr.Child(rs_i);
+
+                    sc_str = is_sc_show ? sc.Description : "&nbsp;";
+                    ar_str = is_ar_show ? ar.Description : "&nbsp;";
+                    dr_str = is_dr_show ? dr.Description : "&nbsp;";
+                    rs_str = rs.Description;
+
+                    if (true)
+                    {
+                        s = s +
+                            "<tr>" +
+                            "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + sc_str + "</td>" +
+                            "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + ar_str + "</td>" +
+                            "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + dr_str + "</td>" +
+                            "<td style=\"background-color : #FFFFFF\" width : 100\%\" valign=\"top\">" +
+                            rs_str +
+                            "</td>" + "</tr>";
+
+                        // Сбрасываем названия науки, области и направления.
+                        is_sc_show = false;
+                        is_ar_show = false;
+                        is_dr_show = false;
+                    }
+                }
+            }
+        }
+    }
+
+    s = s + "</table>";
+
+    return s;
+}
+
+// Загрузка контента.
+function on_load()
+{
+    var t = construct_ftree(fund_research_plan_2020_2030_data());
+    var html = construct_results_table_HTML(t);
+
+    document.getElementById("fund_research_plan_div").innerHTML = html;
+}
+-->
+</script>
+
+<body onload="on_load()">
+
+    <!-- Основная таблица. -->
+    <table class="sketch">
+
+        <!-- Таблица результов. -->
+        <tr height="25px">
+            <td class="dddddd" align="center">
+                <font class="big-font">План фундаментальных научных исследований на 2020 - 2030 годы</font>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="fund_research_plan_div"></div><br>
+            </td>
+        </tr>
+
+        <!-- Футер. -->
+        <tr><td class="dddddd"><img src="../../pics/pix.gif" height="20px"></td></tr>
+
+    </table>
+
+</body>
+
+</html>
