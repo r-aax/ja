@@ -18,7 +18,7 @@ function E(mark, str, sub)
 //   -- Направление
 //   --- Область
 //   ---- Результат
-function pfi_gan_data()
+function pfi_gan_2013_2020_data()
 {
     data =
     [
