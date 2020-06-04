@@ -1,0 +1,143 @@
+<!--
+JA
+-->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="content-style-type" content="text/css">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link rel="stylesheet" href="style.css" type="text/css" title="default" media="screen">
+    <title>План фундаментальных исследований Российской академии наук на период до 2025 года</title>
+    <script type="text/javascript" language="JavaScript" src="../../js/ftree.js"></script>
+    <script type="text/javascript" language="JavaScript" src="data.js"></script>
+</head>
+
+<script type="text/javascript" language="JavaScript">
+<!--
+// Построение дерева из данных результатов исследований.
+function construct_ftree(data)
+{
+    var root = new Tree("root", "", "Корень");
+
+    for (var sc_i = 0; sc_i < data.length; sc_i++)
+    {
+        var sc = data[sc_i];
+        var sc_t = new Tree("science", "", sc.Str);
+
+        root.AddChild(sc_t);
+
+        for (var dr_i = 0; dr_i < sc.Sub.length; dr_i++)
+        {
+            var dr = sc.Sub[dr_i];
+            var dr_t = new Tree("direction", "", dr.Str);
+
+            sc_t.AddChild(dr_t);
+
+            for (var ts_i = 0; ts_i < dr.Sub.length; ts_i++)
+            {
+                var ts = dr.Sub[ts_i];
+                var ts_t = new Tree("task", "", ts.Str);
+
+                dr_t.AddChild(ts_t);
+
+                // Установка метки.
+                if (sc.Mark > 0)
+                {
+                    ts_t.Mark = sc.Mark;
+                }
+                else if (dr.Mark > 0)
+                {
+                    ts_t.Mark = dr.Mark;
+                }
+                else
+                {
+                    ts_t.Mark = ts.Mark;
+                }
+            }
+        }
+    }
+
+    return root;
+}
+
+// Построение HTML по дереву.
+function construct_results_table_HTML(t)
+{
+    var s = "<table width=\"100%\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\" " +
+            "style=\"border-style : hidden; background-color : #DDDDDD\">";
+
+    for (var sc_i = 0; sc_i < t.ChildrenCount(); sc_i++)
+    {
+        var sc = t.Child(sc_i);
+        var is_sc_show = true;
+
+        for (var dr_i = 0; dr_i < sc.ChildrenCount(); dr_i++)
+        {
+            var dr = sc.Child(dr_i);
+            var is_dr_show = true;
+
+            for (var ts_i = 0; ts_i < dr.ChildrenCount(); ts_i++)
+            {
+                var ts = dr.Child(ts_i);
+                var sc_str = is_sc_show ? sc.Description : "&nbsp;";
+                var dr_str = is_dr_show ? dr.Description : "&nbsp;";
+
+                s = s + 
+                    "<tr>" +
+                    "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + sc_str + "</td>" +
+                    "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + dr_str + "</td>" +
+                    "<td style=\"background-color : #FFFFFF\" width : 100\%\" valign=\"top\">" + ts.Description +
+                    "</td></tr>";
+
+                is_sc_show = false;
+                is_dr_show = false;
+            }
+        }
+    }
+
+    s = s + "</table>";
+
+    return s;
+}
+
+// Загрузка контента.
+function on_load()
+{
+    var t = construct_ftree(ras_research_plan_until_2025_data());
+    var html = construct_results_table_HTML(t);
+
+    document.getElementById("ras_research_plan_div").innerHTML = html;
+}
+-->
+</script>
+
+<body onload="on_load()">
+
+    <!-- Основная таблица. -->
+    <table class="sketch">
+
+        <!-- Таблица результов. -->
+        <tr height="25px">
+            <td class="dddddd" align="center">
+                <font class="big-font">План фундаментальных исследований Российской академии наук</font>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="ras_research_plan_div"></div><br>
+            </td>
+        </tr>
+
+        <!-- Футер. -->
+        <tr><td class="dddddd"><img src="../../pics/pix.gif" height="20px"></td></tr>
+
+    </table>
+
+</body>
+
+</html>
