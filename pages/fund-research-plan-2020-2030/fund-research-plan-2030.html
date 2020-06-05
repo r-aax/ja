@@ -83,6 +83,8 @@ function construct_results_table_HTML(t)
 {
     var s = "<table width=\"100%\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\" " +
             "style=\"border-style : hidden; background-color : #DDDDDD\">";
+    var cur_number = 0;
+    var show_number = 0;
 
     for (var sc_i = 0; sc_i < t.ChildrenCount(); sc_i++)
     {
@@ -103,20 +105,37 @@ function construct_results_table_HTML(t)
                 {
                     var rs = dr.Child(rs_i);
 
+                    cur_number = cur_number + 1;
+
                     sc_str = is_sc_show ? sc.Description : "&nbsp;";
                     ar_str = is_ar_show ? ar.Description : "&nbsp;";
                     dr_str = is_dr_show ? dr.Description : "&nbsp;";
                     rs_str = rs.Description;
 
+                    // if (rs.Mask != 8)
                     if (true)
                     {
+                        show_number = show_number + 1;
+
+                        var col = "#FFFFFF";
+
+                        switch (rs.Mark)
+                        {
+                            case 1:
+                                col = "lightgreen";
+                                break;
+                            case 8:
+                                col = "#EEEEEE";
+                                break;
+                        }
+
                         s = s +
                             "<tr>" +
                             "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + sc_str + "</td>" +
                             "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + ar_str + "</td>" +
                             "<td style=\"background-color : #FFFFFF\" valign=\"top\">" + dr_str + "</td>" +
-                            "<td style=\"background-color : #FFFFFF\" width : 100\%\" valign=\"top\">" +
-                            rs_str +
+                            "<td style=\"background-color : " + col + "\" width : 100\%\" valign=\"top\">" +
+                            rs_str + " [" + show_number + "/" + cur_number + "]" +
                             "</td>" + "</tr>";
 
                         // Сбрасываем названия науки, области и направления.
