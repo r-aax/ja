@@ -20,8 +20,41 @@ function Tree(tp, nm, descr)
     this.Type = tp;
     this.Name = nm;
     this.Description = descr;
+    this.ParentEdge = undefined;
     this.ChildrenEdges = [];
-    this.ParentEdge = null;
+}
+
+//--------------------------------------------------------------------------------------------------
+
+// Доступ к родителю и детям.
+Tree.prototype.Parent = function()
+{
+    var edge = this.ParentEdge;
+
+    if (edge == undefined)
+    {
+        return undefined;
+    }
+    else
+    {
+        return edge.Pred;
+    }
+}
+Tree.prototype.ChildrenCount = function()
+{
+    return this.ChildrenEdges.length;
+}
+Tree.prototype.ChildEdge = function(i)
+{
+    return this.ChildrenEdges[i];
+}
+Tree.prototype.Children = function()
+{
+    return this.ChildrenEdges.map(e => e.Succ);
+}
+Tree.prototype.Child = function(i)
+{
+    return this.Children()[i];
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -29,11 +62,11 @@ function Tree(tp, nm, descr)
 // Простые ппроверки дерева на корень и лист.
 Tree.prototype.IsRoot = function()
 {
-    return this.ParentEdge == null;
+    return this.Parent() == undefined;
 }
 Tree.prototype.IsLeaf = function()
 {
-    return this.ChildrenEdges.length == 0;
+    return this.ChildrenCount() == 0;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -49,28 +82,16 @@ Tree.prototype.AddChild = function(child)
 
 //--------------------------------------------------------------------------------------------------
 
-// Проход по детям.
-Tree.prototype.ChildrenCount = function()
-{
-    return this.ChildrenEdges.length;
-}
-Tree.prototype.Child = function(i)
-{
-    return this.ChildrenEdges[i].Succ;
-}
-
-//--------------------------------------------------------------------------------------------------
-
 // Получение уровня дерева внутри охватывающего дерева.
 Tree.prototype.Level = function()
 {
-    if (this.ParentEdge == null)
+    if (this.IsRoot())
     {
         return 0;
     }
     else
     {
-        return 1 + this.ParentEdge.Pred.Level();
+        return 1 + this.Parent().Level();
     }
 }
 
@@ -88,17 +109,17 @@ Tree.prototype.Find = function(fun)
     // Проверяем детей.
     for (var i = 0; i < this.ChildrenCount(); i++)
     {
-        var child = this.ChildrenEdges[i].Succ;
+        var child = this.Child(i);
         var res = child.Find(fun);
 
-        if (res != null)
+        if (res != undefined)
         {
             return res;
         }
     }
 
-    // Все.
-    return null;
+    // Узел не найден.
+    return undefined;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -117,12 +138,10 @@ Tree.prototype.GetFlatLeafs = function()
         // то надо применить функцию ко всем детям,
         // а потом соединить все результаты.
 
-        var map_tmp = this.ChildrenEdges.map(function(e) { return e.Succ.GetFlatLeafs(); });
-        var reduce_tmp = map_tmp.reduce(function(acc, elem) { return acc.concat(elem); });
-
-        return reduce_tmp;
+        return this.ChildrenEdges
+               .map(e => e.Succ.GetFlatLeafs())
+               .reduce((acc, list) => acc.concat(list));
     }
 }
 
-//==================================================================================================
 //==================================================================================================
