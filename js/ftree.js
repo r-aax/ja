@@ -138,8 +138,8 @@ Tree.prototype.GetFlatLeafs = function()
         // то надо применить функцию ко всем детям,
         // а потом соединить все результаты.
 
-        return this.ChildrenEdges
-               .map(e => e.Succ.GetFlatLeafs())
+        return this.Children()
+               .map(ch => ch.GetFlatLeafs())
                .reduce((acc, list) => acc.concat(list));
     }
 }
