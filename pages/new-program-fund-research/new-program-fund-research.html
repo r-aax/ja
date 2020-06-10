@@ -1,0 +1,120 @@
+<!--
+JA
+-->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="content-style-type" content="text/css">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link rel="stylesheet" href="style.css" type="text/css" title="default" media="screen">
+    <title>Программа исследований</title>
+    <script type="text/javascript" language="JavaScript" src="../../js/ftree.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../pfi-gan-2013-2020/data.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../fund-research-plan-2020-2030/data.js"></script>
+</head>
+
+<script type="text/javascript" language="JavaScript">
+<!--
+function get_HTML_of_all_leafs_with_marks(tree, lab, mark)
+{
+    var text = "none";
+    var find_fun = function(t) { return t.Description.indexOf(lab) != -1; };
+    var subtree = tree.Find(find_fun);
+    var ch = subtree.GetFlatLeafs();
+    ch = ch.filter(function(c) { return c.Mark == mark; });
+    var texts = ch.map(function(c) { return "<p>" + c.Description + "</p>"; });
+    var text = texts.reduce(function(acc, elem) { return acc + elem; });
+
+    return text;
+}
+
+function get_HTML_of_row(lab, t1, l1, m1, t2, l2, m2)
+{
+    var s = "";
+
+    s = s + "<tr><td bgcolor=\"#FFFFFF\" valign=\"top\">" + lab + "</td><td bgcolor=\"#FFFFFF\" valign=\"top\">";
+    s = s + get_HTML_of_all_leafs_with_marks(t1, l1, m1);
+    s = s + "</td><td bgcolor=\"#FFFFFF\" valign=\"top\">";
+    s = s + get_HTML_of_all_leafs_with_marks(t2, l2, m2);
+    s = s + "</td><td bgcolor=\"#FFFFFF\" valign=\"top\">РАН</td><td bgcolor=\"#FFFFFF\" valign=\"top\">Бюджет РФ</td></tr>";
+
+    return s;
+}
+
+// Построение HTML по дереву.
+function construct_results_table_HTML(t_old, t_new)
+{
+    var s = "<table width=\"100%\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\" " +
+            "style=\"border-style : hidden; background-color : #DDDDDD\">";
+
+    s = s + "<tr><th>&nbsp;</th><th width=\"30\%\">2013 - 2020</th><th width=\"70\%\">2021 - 2030</th><th>Исполнители</th><th>Финансирование</th></tr>";
+
+    s = s + get_HTML_of_row("1. Теоретическая математика",
+                            t_old, "1. Теоретическая математика", 2,
+                            t_new, "1. Теоретическая математика", 1);
+    s = s + get_HTML_of_row("2. Вычислительная математика",
+                            t_old, "2. Вычислительная математика", 2,
+                            t_new, "2. Вычислительная математика", 1);
+    s = s + get_HTML_of_row("3. Математическое моделирование",
+                            t_old, "3. Математическое моделирование", 2,
+                            t_new, "3. Математическое моделирование", 1);
+    s = s + get_HTML_of_row("4. Высокопроизводительные вычисления",
+                            t_old, "4. Высокопроизводительные вычисления", 2,
+                            t_new, "4. Высокопроизводительные вычисления", 1);
+    s = s + get_HTML_of_row("5. Теоретическая информатика и дискретная математика",
+                            t_old, "5. Теоретическая информатика и дискретная математика", 2,
+                            t_new, "5. Теоретическая информатика и дискретная математика", 1);
+    s = s + get_HTML_of_row("6. Системное программирование",
+                            t_old, "6. Системное программирование", 2,
+                            t_new, "6. Системное программирование", 1);
+    s = s + get_HTML_of_row("7. Информационно-вычислительные системы в науке и образовании",
+                            t_old, "7. Информац", 2,
+                            t_new, "7. Информац", 1);
+    s = s + "</table>";
+
+    return s;
+}
+
+// Загрузка контента.
+function on_load()
+{
+    var t_old = pfi_gan_2013_2020_ftree(pfi_gan_2013_2020_data());
+    var t_new = fund_research_plan_2020_2030_ftree(fund_research_plan_2020_2030_data());
+    
+    var html = construct_results_table_HTML(t_old, t_new);
+
+    document.getElementById("pfi_gan_div").innerHTML = html;
+}
+-->
+</script>
+
+<body onload="on_load()">
+
+    <!-- Основная таблица. -->
+    <table class="sketch">
+
+        <!-- Таблица результов. -->
+        <tr height="25px">
+            <td class="dddddd" align="center">
+                <font class="big-font">Программа исследований</font>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="pfi_gan_div"></div><br>
+            </td>
+        </tr>
+
+        <!-- Футер. -->
+        <tr><td class="dddddd"><img src="../../pics/pix.gif" height="20px"></td></tr>
+
+    </table>
+
+</body>
+
+</html>

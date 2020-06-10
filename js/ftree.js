@@ -74,4 +74,55 @@ Tree.prototype.Level = function()
     }
 }
 
+//--------------------------------------------------------------------------------------------------
+
+// Поиск узла дерева.
+Tree.prototype.Find = function(fun)
+{
+    // Проверяем сам узел.
+    if (fun(this))
+    {
+        return this;
+    }
+
+    // Проверяем детей.
+    for (var i = 0; i < this.ChildrenCount(); i++)
+    {
+        var child = this.ChildrenEdges[i].Succ;
+        var res = child.Find(fun);
+
+        if (res != null)
+        {
+            return res;
+        }
+    }
+
+    // Все.
+    return null;
+}
+
+//--------------------------------------------------------------------------------------------------
+
+// Получение всех листов в виде плоского списка.
+Tree.prototype.GetFlatLeafs = function()
+{
+    // Проверяем сам узел.
+    if (this.IsLeaf())
+    {
+        return [this];
+    }
+    else
+    {
+        // Так как узел не является листом,
+        // то надо применить функцию ко всем детям,
+        // а потом соединить все результаты.
+
+        var map_tmp = this.ChildrenEdges.map(function(e) { return e.Succ.GetFlatLeafs(); });
+        var reduce_tmp = map_tmp.reduce(function(acc, elem) { return acc.concat(elem); });
+
+        return reduce_tmp;
+    }
+}
+
+//==================================================================================================
 //==================================================================================================
