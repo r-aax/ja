@@ -50,7 +50,7 @@ Tree.prototype.ChildEdge = function(i)
 }
 Tree.prototype.Children = function()
 {
-    return this.ChildrenEdges.map(e => e.Succ);
+    return this.ChildrenEdges.map(function(e) { return e.Succ; });
 }
 Tree.prototype.Child = function(i)
 {
@@ -139,9 +139,27 @@ Tree.prototype.GetFlatLeafs = function()
         // а потом соединить все результаты.
 
         return this.Children()
-               .map(ch => ch.GetFlatLeafs())
-               .reduce((acc, list) => acc.concat(list));
+               .map(function(ch) { return ch.GetFlatLeafs(); })
+               .reduce(function(acc, list) { return acc.concat(list); });
     }
+}
+
+//--------------------------------------------------------------------------------------------------
+
+// Получение всех узлов в виде плоского списка.
+Tree.prototype.GetFlatNodes = function()
+{
+    var flat = [this];
+
+    if (!this.IsLeaf())
+    {
+        // Добавляем к нему списки детей.
+        flat = flat.concat(this.Children()
+                           .map(function(ch) { return ch.GetFlatNodes(); })
+                           .reduce(function(acc, list) { return acc.concat(list); }));
+    }
+
+    return flat;
 }
 
 //==================================================================================================
