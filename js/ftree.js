@@ -59,6 +59,36 @@ Tree.prototype.Child = function(i)
 
 //--------------------------------------------------------------------------------------------------
 
+// Получение индекса.
+Tree.prototype.Index = function()
+{
+    if (this.IsRoot())
+    {
+        return -1;
+    }
+    else
+    {
+        return this.Parent().ChildrenEdges.indexOf(this.ParentEdge);
+    }
+}
+Tree.prototype.IsFirstChild = function()
+{
+    return this.Index() == 0;
+}
+Tree.prototype.IsLastChild = function()
+{
+    if (this.IsRoot())
+    {
+        return false;
+    }
+    else
+    {
+        return Index() == (this.Parent().ChildrenCount() - 1);
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+
 // Простые ппроверки дерева на корень и лист.
 Tree.prototype.IsRoot = function()
 {
@@ -160,6 +190,43 @@ Tree.prototype.GetFlatNodes = function()
     }
 
     return flat;
+}
+
+//--------------------------------------------------------------------------------------------------
+
+// Обход всех узлов дерева в применением действия.
+Tree.prototype.ForEach = function(fun)
+{
+    fun(this);
+
+    for (var i = 0; i < this.ChildrenCount(); i++)
+    {
+        this.Child(i).ForEach(fun);
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+
+// Свертка дерева.
+Tree.prototype.Fold = function(before, node_fun, before_children_fun, after_children_fun, after)
+{
+    var res = before;
+
+    res = node_fun(res, this);
+
+    if (this.ChildrenCount() > 0)
+    {
+        res = before_children_fun(res, this);
+
+        for (var i = 0; i < this.ChildrenCount(); i++)
+        {
+            res = this.Child(i).Fold(res, node_fun, before_children_fun, after_children_fun, "");
+        }
+
+        res = after_children_fun(res, this);
+    }
+
+    return res + after;
 }
 
 //==================================================================================================

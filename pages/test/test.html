@@ -1,0 +1,99 @@
+<!--
+JA
+-->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="content-style-type" content="text/css">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link rel="stylesheet" href="style.css" type="text/css" title="default" media="screen">
+    <title>Тест</title>
+    <script type="text/javascript" language="JavaScript" src="../../js/ftree.js"></script>
+</head>
+
+<script type="text/javascript" language="JavaScript">
+<!--
+// Тест функционального дерева.
+function ftree_test()
+{
+    var earth = new Tree("planet", "Earth", "");
+
+    var africa = new Tree("continent", "Africa", "");
+    var eurasia = new Tree("continent", "Eurasia", "");
+    earth.AddChild(africa);
+    earth.AddChild(eurasia);
+
+    var egypt = new Tree("country", "Egypt");
+    var nigeria = new Tree("country", "Nigeria");
+    var uganda = new Tree("country", "Uganda");
+    var russia = new Tree("country", "Russia");
+    var china = new Tree("country", "China");
+    var india = new Tree("country", "India");
+    africa.AddChild(egypt);
+    africa.AddChild(nigeria);
+    africa.AddChild(uganda);
+    eurasia.AddChild(russia);
+    eurasia.AddChild(china);
+    eurasia.AddChild(india);
+
+    var html =
+        earth.Fold
+        (
+            "<ul>",
+            function(s, n)
+            {
+                return s + "<li>" + n.Name + "</li>";
+            },
+            function(s, n)
+            {
+                return s + "<ul>";
+            },
+            function(s, n)
+            {
+                return s + "</ul>"
+            },
+            "</ul>"
+        );
+
+    document.getElementById("ftree_div").innerHTML = html;
+}
+
+// Загрузка страницы.
+function on_load()
+{
+    ftree_test();
+}
+-->
+</script>
+
+<body onload="on_load()">
+
+    <!-- Основная таблица. -->
+    <table class="sketch">
+
+        <!-- Таблица результов. -->
+        <tr height="25px">
+            <td class="dddddd" align="center">
+                <font class="big-font">Тест</font>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <div id="ftree_div"></div><br>
+            </td>
+        </tr>
+
+        <!-- Футер. -->
+        <tr><td class="dddddd"><img src="../../pics/pix.gif" height="20px"></td></tr>
+
+    </table>
+
+</body>
+
+</html>
