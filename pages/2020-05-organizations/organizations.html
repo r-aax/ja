@@ -13,7 +13,7 @@ JA
     <meta name="keywords" content="">
     <link rel="stylesheet" href="style.css" type="text/css" title="default" media="screen">
     <title>Организации</title>
-    <script type="text/javascript" language="JavaScript" src="../../js/ftree.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../../js/FTree.js"></script>
 </head>
 
 <script type="text/javascript" language="JavaScript">
@@ -190,7 +190,7 @@ function add_data_to_ftree(t, d)
     for (var i = 0; i < d.length; i++)
     {
         var elem = d[i];
-        var child = new Tree("organization", "", elem.Str);
+        var child = new JA.FTree.Tree("organization", "", elem.Str);
 
         child.Mark = elem.Mark;
         child.Ref = elem.Ref;
@@ -202,7 +202,7 @@ function add_data_to_ftree(t, d)
 
 function organizations_ftree(d)
 {
-    t = new Tree("root", "", "Корень");
+    t = new JA.FTree.Tree("root", "", "Корень");
     
     add_data_to_ftree(t, d);
 

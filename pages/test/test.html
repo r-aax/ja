@@ -13,7 +13,7 @@ JA
     <meta name="keywords" content="">
     <link rel="stylesheet" href="style.css" type="text/css" title="default" media="screen">
     <title>Тест</title>
-    <script type="text/javascript" language="JavaScript" src="../../js/ftree.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../../js/FTree.js"></script>
 </head>
 
 <script type="text/javascript" language="JavaScript">
@@ -21,19 +21,19 @@ JA
 // Тест функционального дерева.
 function ftree_test()
 {
-    var earth = new Tree("planet", "Earth", "");
+    var earth = new JA.FTree.Tree("planet", "Earth", "");
 
-    var africa = new Tree("continent", "Africa", "");
-    var eurasia = new Tree("continent", "Eurasia", "");
+    var africa = new JA.FTree.Tree("continent", "Africa", "");
+    var eurasia = new JA.FTree.Tree("continent", "Eurasia", "");
     earth.AddChild(africa);
     earth.AddChild(eurasia);
 
-    var egypt = new Tree("country", "Egypt");
-    var nigeria = new Tree("country", "Nigeria");
-    var uganda = new Tree("country", "Uganda");
-    var russia = new Tree("country", "Russia");
-    var china = new Tree("country", "China");
-    var india = new Tree("country", "India");
+    var egypt = new JA.FTree.Tree("country", "Egypt");
+    var nigeria = new JA.FTree.Tree("country", "Nigeria");
+    var uganda = new JA.FTree.Tree("country", "Uganda");
+    var russia = new JA.FTree.Tree("country", "Russia");
+    var china = new JA.FTree.Tree("country", "China");
+    var india = new JA.FTree.Tree("country", "India");
     africa.AddChild(egypt);
     africa.AddChild(nigeria);
     africa.AddChild(uganda);

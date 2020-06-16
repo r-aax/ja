@@ -1,10 +1,14 @@
 // Реализация функционального дерева.
 
+var JA;
+if (!JA) JA = {};
+JA.FTree = {};
+
 //==================================================================================================
 
 // Создание ребра дерева.
 // Ребро знает о своем предшественнике и последователе.
-function Edge(pred, succ)
+JA.FTree.Edge = function(pred, succ)
 {
     this.Pred = pred;
     this.Succ = succ;
@@ -15,7 +19,7 @@ function Edge(pred, succ)
 // Создание дерева.
 // Задается тип, имя и описание.
 // Потомков нет, родителя тоже нет.
-function Tree(tp, nm, descr)
+JA.FTree.Tree = function(tp, nm, descr)
 {
     this.Type = tp;
     this.Name = nm;
@@ -27,7 +31,7 @@ function Tree(tp, nm, descr)
 //--------------------------------------------------------------------------------------------------
 
 // Доступ к родителю и детям.
-Tree.prototype.Parent = function()
+JA.FTree.Tree.prototype.Parent = function()
 {
     var edge = this.ParentEdge;
 
@@ -40,19 +44,19 @@ Tree.prototype.Parent = function()
         return edge.Pred;
     }
 }
-Tree.prototype.ChildrenCount = function()
+JA.FTree.Tree.prototype.ChildrenCount = function()
 {
     return this.ChildrenEdges.length;
 }
-Tree.prototype.ChildEdge = function(i)
+JA.FTree.Tree.prototype.ChildEdge = function(i)
 {
     return this.ChildrenEdges[i];
 }
-Tree.prototype.Children = function()
+JA.FTree.Tree.prototype.Children = function()
 {
     return this.ChildrenEdges.map(function(e) { return e.Succ; });
 }
-Tree.prototype.Child = function(i)
+JA.FTree.Tree.prototype.Child = function(i)
 {
     return this.Children()[i];
 }
@@ -60,7 +64,7 @@ Tree.prototype.Child = function(i)
 //--------------------------------------------------------------------------------------------------
 
 // Получение индекса.
-Tree.prototype.Index = function()
+JA.FTree.Tree.prototype.Index = function()
 {
     if (this.IsRoot())
     {
@@ -71,11 +75,11 @@ Tree.prototype.Index = function()
         return this.Parent().ChildrenEdges.indexOf(this.ParentEdge);
     }
 }
-Tree.prototype.IsFirstChild = function()
+JA.FTree.Tree.prototype.IsFirstChild = function()
 {
     return this.Index() == 0;
 }
-Tree.prototype.IsLastChild = function()
+JA.FTree.Tree.prototype.IsLastChild = function()
 {
     if (this.IsRoot())
     {
@@ -90,11 +94,11 @@ Tree.prototype.IsLastChild = function()
 //--------------------------------------------------------------------------------------------------
 
 // Простые ппроверки дерева на корень и лист.
-Tree.prototype.IsRoot = function()
+JA.FTree.Tree.prototype.IsRoot = function()
 {
     return this.Parent() == undefined;
 }
-Tree.prototype.IsLeaf = function()
+JA.FTree.Tree.prototype.IsLeaf = function()
 {
     return this.ChildrenCount() == 0;
 }
@@ -102,9 +106,9 @@ Tree.prototype.IsLeaf = function()
 //--------------------------------------------------------------------------------------------------
 
 // Добавление потомка.
-Tree.prototype.AddChild = function(child)
+JA.FTree.Tree.prototype.AddChild = function(child)
 {
-    var edge = new Edge(this, child);
+    var edge = new JA.FTree.Edge(this, child);
 
     this.ChildrenEdges.push(edge);
     child.ParentEdge = edge;
@@ -113,7 +117,7 @@ Tree.prototype.AddChild = function(child)
 //--------------------------------------------------------------------------------------------------
 
 // Получение уровня дерева внутри охватывающего дерева.
-Tree.prototype.Level = function()
+JA.FTree.Tree.prototype.Level = function()
 {
     if (this.IsRoot())
     {
@@ -128,7 +132,7 @@ Tree.prototype.Level = function()
 //--------------------------------------------------------------------------------------------------
 
 // Поиск узла дерева.
-Tree.prototype.Find = function(fun)
+JA.FTree.Tree.prototype.Find = function(fun)
 {
     // Проверяем сам узел.
     if (fun(this))
@@ -155,7 +159,7 @@ Tree.prototype.Find = function(fun)
 //--------------------------------------------------------------------------------------------------
 
 // Получение всех листов в виде плоского списка.
-Tree.prototype.GetFlatLeafs = function()
+JA.FTree.Tree.prototype.GetFlatLeafs = function()
 {
     // Проверяем сам узел.
     if (this.IsLeaf())
@@ -177,7 +181,7 @@ Tree.prototype.GetFlatLeafs = function()
 //--------------------------------------------------------------------------------------------------
 
 // Получение всех узлов в виде плоского списка.
-Tree.prototype.GetFlatNodes = function()
+JA.FTree.Tree.prototype.GetFlatNodes = function()
 {
     var flat = [this];
 
@@ -195,7 +199,7 @@ Tree.prototype.GetFlatNodes = function()
 //--------------------------------------------------------------------------------------------------
 
 // Обход всех узлов дерева в применением действия.
-Tree.prototype.ForEach = function(fun)
+JA.FTree.Tree.prototype.ForEach = function(fun)
 {
     fun(this);
 
@@ -208,7 +212,8 @@ Tree.prototype.ForEach = function(fun)
 //--------------------------------------------------------------------------------------------------
 
 // Свертка дерева.
-Tree.prototype.Fold = function(before, node_fun, before_children_fun, after_children_fun, after)
+JA.FTree.Tree.prototype.Fold = function(before, node_fun,
+                                        before_children_fun, after_children_fun, after)
 {
     var res = before;
 

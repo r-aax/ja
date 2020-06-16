@@ -4511,33 +4511,33 @@ new W(8, "исследование научных проблем интегра�
 // Построение дерева из данных результатов исследований.
 function pfi_gan_2013_2020_ftree(data)
 {
-    var root = new Tree("root", "", "Корень");
+    var root = new JA.FTree.Tree("root", "", "Корень");
 
     for (var sc_i = 0; sc_i < data.length; sc_i++)
     {
         var sc = data[sc_i];
-        var sc_t = new Tree("science", "", sc.Str);
+        var sc_t = new JA.FTree.Tree("science", "", sc.Str);
 
         root.AddChild(sc_t);
 
         for (var dr_i = 0; dr_i < sc.Sub.length; dr_i++)
         {
             var dr = sc.Sub[dr_i];
-            var dr_t = new Tree("direction", "", dr.Str);
+            var dr_t = new JA.FTree.Tree("direction", "", dr.Str);
 
             sc_t.AddChild(dr_t);
 
             for (var ar_i = 0; ar_i < dr.Sub.length; ar_i++)
             {
                 var ar = dr.Sub[ar_i];
-                var ar_t = new Tree("area", "", ar.Str);
+                var ar_t = new JA.FTree.Tree("area", "", ar.Str);
 
                 dr_t.AddChild(ar_t);
 
                 for (var rs_i = 0; rs_i < ar.Sub.length; rs_i++)
                 {
                     var rs = ar.Sub[rs_i];
-                    var rs_t = new Tree("result", "", rs.Str);
+                    var rs_t = new JA.FTree.Tree("result", "", rs.Str);
 
                     // Установка метки.
                     if (sc.Mark > 0)
