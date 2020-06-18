@@ -44,7 +44,6 @@ AmortizationBank.prototype.Index = function(year, month)
 }
 AmortizationBank.prototype.Get = function(year, month)
 {
-    alert(this.Index(year, month));
     return this.E[this.Index(year, month)];
 }
 AmortizationBank.prototype.Set = function(year, month, val)
@@ -112,32 +111,13 @@ calculate_amortization = function(t)
     for (var i = 0; i < t.length; i++)
     {
         line = t[i];
-        line.ValuesFrom2014 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        line.Bank = new AmortizationBank(2014, 0, 200);
 
-        for (var j = 0; j < line.ValuesFrom2014.length; j++)
-        {
-            // Расчет амортизации для года (2014 + j).
-
-            var am_start = (line.DatePoint.getFullYear() - 2014) * 12 +
-                           (line.DatePoint.getMonth() + 1); // амортизация начинается со следующего месяца
-            var am_length = line.Years * 12;
-            var am_end = am_start + am_length - 1;
-            var year_start = j * 12;
-            var year_end = year_start + 11;
-            var am_length_in_year = 0;
-
-            // Пересечение.
-            var start = Math.max(am_start, year_start);
-            var end = Math.min(am_end, year_end);
-            if (start <= end)
-            {
-                am_length_in_year = end - start + 1;
-            }
-
-            var am = line.Money * (am_length_in_year / am_length);
-
-            line.ValuesFrom2014[j] = am;
-        }
+        // Распределяем амортизацию сразу и по-тупому.
+        line.Bank.Spread(line.DatePoint.getFullYear(),
+                         line.DatePoint.getMonth() + 1,
+                         line.Money,
+                         line.Years * 12);
     }
 }
 
@@ -192,15 +172,14 @@ get_amortization_table_HTML = function(t)
                 res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" + al.Money.toLocaleString() + "</td>";
                 res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" + al.Years + "</td>"
 
-                for (var i = 0; i < al.ValuesFrom2014.length; i++)
+                for (var i = 2014; i <= 2023; i++)
                 {
-                    var is_2020 = ((2014 + i) == 2020);
-                    var bb = is_2020 ? "<b><font color=\"indianred\">" : "";
-                    var be = is_2020 ? "</font></b>" : "";
+                    var bb = (i == 2020) ? "<b><font color=\"indianred\">" : "";
+                    var be = (i == 2020) ? "</font></b>" : "";
 
                     res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" +
                                 "<font size=\"-2\">" +
-                                bb + al.ValuesFrom2014[i].toLocaleString() + be +
+                                bb + al.Bank.GetYear(i).toLocaleString() + be +
                                 "</font></td>";
                 }
 
@@ -237,7 +216,7 @@ distribute_amortization = function(confs, amort)
             {
                 var e = find_conf[0];
 
-                e.Amort2020 = e.Amort2020 + line.ValuesFrom2014[2020 - 2014];
+                e.Amort2020 = e.Amort2020 + line.Bank.GetYear(2020);
             }
         }
         else
@@ -247,7 +226,7 @@ distribute_amortization = function(confs, amort)
             {
                 var e = confs[j];
 
-                e.Amort2020 = e.Amort2020 + (e.FullNodeHoursWeight * line.ValuesFrom2014[2020 - 2014]);
+                e.Amort2020 = e.Amort2020 + (e.FullNodeHoursWeight * line.Bank.GetYear(2020));
             }
         }
     }
