@@ -118,6 +118,11 @@ calculate_amortization = function(t)
                          line.DatePoint.getMonth() + 1,
                          line.Money,
                          line.Years * 12);
+
+        // Май 2019 - точка X, после нее все перераспределяем заново.
+        var x = line.Bank.GetAllFrom(2019, 4);
+        line.Bank.SetAllFrom(2019, 4, 0.0);
+        line.Bank.Spread(2019, 4, x, 48);
     }
 }
 
@@ -129,22 +134,18 @@ get_amortization_table_HTML = function(t)
     var head = "<table border=\"0\" align=\"center\">";
     var foot = "</table>";
     var bg = "#DDDDDD";
+    var year_from = 2014;
+    var year_to = 2023;
 
     head = head + "<tr>";
     head = head + "<th bgcolor=\"" + bg + "\">узлы</th>";
     head = head + "<th bgcolor=\"" + bg + "\">дата</th>";
     head = head + "<th bgcolor=\"" + bg + "\">сумма</th>";
     head = head + "<th bgcolor=\"" + bg + "\">годы</th>";
-    head = head + "<th bgcolor=\"" + bg + "\">2014</th>";
-    head = head + "<th bgcolor=\"" + bg + "\">2015</th>";
-    head = head + "<th bgcolor=\"" + bg + "\">2016</th>";
-    head = head + "<th bgcolor=\"" + bg + "\">2017</th>";
-    head = head + "<th bgcolor=\"" + bg + "\">2018</th>";
-    head = head + "<th bgcolor=\"" + bg + "\">2019</th>";
-    head = head + "<th bgcolor=\"" + bg + "\">2020</th>";
-    head = head + "<th bgcolor=\"" + bg + "\">2021</th>";
-    head = head + "<th bgcolor=\"" + bg + "\">2022</th>";
-    head = head + "<th bgcolor=\"" + bg + "\">2023</th>";
+    for (var i = year_from; i <= year_to; i++)
+    {
+        head = head + "<th bgcolor=\"" + bg + "\">" + i + "</th>";
+    }
     head = head + "</tr>";
 
     var fun_add_0_to_digit = function(d) { return (d < 10) ? ("0" + d) : d; }
@@ -172,7 +173,7 @@ get_amortization_table_HTML = function(t)
                 res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" + al.Money.toLocaleString() + "</td>";
                 res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" + al.Years + "</td>"
 
-                for (var i = 2014; i <= 2023; i++)
+                for (var i = year_from; i <= year_to; i++)
                 {
                     var bb = (i == 2020) ? "<b><font color=\"indianred\">" : "";
                     var be = (i == 2020) ? "</font></b>" : "";
@@ -189,6 +190,26 @@ get_amortization_table_HTML = function(t)
             },
             ""
         );
+
+    html = html + "<tr>";
+    html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
+    html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
+    html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
+    html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
+    for (var i = year_from; i <= year_to; i++)
+    {
+        var bb = (i == 2020) ? "<b><font color=\"indianred\">" : "";
+        var be = (i == 2020) ? "</font></b>" : "";
+
+        html = html + "<td bgcolor=\"" + bg + "\" align=\"right\">" +
+                      "<b><font size=\"-2\">" +
+                      bb +
+                      t.map(al => al.Bank.GetYear(i)).Sum().toLocaleString() +
+                      be +
+                      "</font></b></td>";
+
+    }
+    html = html + "</tr>";
 
     return head + html + foot + "<br><br>";
 }
