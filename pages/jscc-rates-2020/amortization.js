@@ -2,6 +2,99 @@
 
 //==================================================================================================
 
+// Реализация с распределением амортиации по месяцам.
+// Предусмотрена возможность изменения графика амортизации в произвольной точке времени.
+
+// Хранилище для реализации амортизации.
+//
+//   year - год, с которого начинаем учет амортизации,
+//   month - месяц, с которого начинаем учет амортизации,
+//   months - на какое количество месяцев в принципе распространяется амортизация.
+AmortizationBank = function(year, month, months)
+{
+    this.Year = year;
+    this.Month = month;
+    this.Months = months;
+
+    // Банк состоит из montsh элементов, в каждом из которых прописаны деньги.
+    // Инициализируем все это просто нулями.
+    this.E = [];
+    for (var i = 0; i < this.Months; i++)
+    {
+        this.E.push(0.0);
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+
+// Доступ к элементам банка.
+AmortizationBank.prototype.Index = function(year, month)
+{
+    var index = (year * 12 + month) - (this.Year * 12 + this.Month);
+
+    // Ловим выход за пределы массива месяцев.
+    if (index >= this.Months)
+    {
+        alert("AmortizationBank.Index : для месяца " +
+              year + ", " + month +
+              "расчет амортизации не предусмотрен.");
+    }
+
+    return index;
+}
+AmortizationBank.prototype.Get = function(year, month)
+{
+    alert(this.Index(year, month));
+    return this.E[this.Index(year, month)];
+}
+AmortizationBank.prototype.Set = function(year, month, val)
+{
+    this.E[this.Index(year, month)] = val;
+}
+AmortizationBank.prototype.GetYear = function(year)
+{
+    return Array.Range(12).map(m => this.Get(year, m)).Sum();
+}
+AmortizationBank.prototype.GetAllFrom = function(year, month)
+{
+    var res = 0.0;
+
+    for (var i = this.Index(year, month); i < this.Months; i++)
+    {
+        res = res + this.E[i];
+    }
+
+    return res;
+}
+AmortizationBank.prototype.SetAllFrom = function(year, month, val)
+{
+    for (var i = this.Index(year, month); i < this.Months; i++)
+    {
+        this.E[i] = val;
+    }
+}
+AmortizationBank.prototype.Spread = function(year, month, money, months)
+{
+    var quote = money / months;
+
+    for (var i = 0; i < months; i++)
+    {
+        var index = this.Index(year, month) + i;
+
+        // Ловим выход за пределы массива месяцев.
+        if (index >= this.Months)
+        {
+            alert("AmortizationBank.Spread : для месяца " +
+                  year + ", " + month +
+                  "расчет амортизации не предусмотрен.");
+        }
+
+        this.E[index] = quote;
+    }
+}
+
+//==================================================================================================
+
 // Строка таблицы амортизации.
 AmortizationLine = function(node_names, date_point, money, years)
 {

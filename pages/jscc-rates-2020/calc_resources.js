@@ -191,19 +191,19 @@ calculate_full_node_hours = function(confs, scheds)
                 function(sh)
                 {
                     // Количество дней берем с маской по месяцам.
-                    var days = JA.Func.zip_with(sh.MonthsActivity,
+                    var days = JA.Func.ZipWith(sh.MonthsActivity,
                                                 mdays,
                                                 function(x, y) { return x * y; });
 
-                    return sh.NodesCount * days.sum();
+                    return sh.NodesCount * days.Sum();
                 }
-            ).sum();
+            ).Sum();
 
         conf.FullNodeHours = full_node_days * 24;
     }
 
     // А теперь добавим вес.
-    var total_node_hours = confs.map(function(c) { return c.FullNodeHours; }).sum();
+    var total_node_hours = confs.map(function(c) { return c.FullNodeHours; }).Sum();
     confs.forEach(function(c) { c.FullNodeHoursWeight = c.FullNodeHours / total_node_hours; });
 }
 

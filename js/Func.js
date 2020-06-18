@@ -7,7 +7,11 @@ JA.Func = {};
 //==================================================================================================
 
 // Дополнение функционала Array.
-Array.prototype.sum = function()
+Array.Range = function(n)
+{
+    return Array.from(Array(n), (x, i) => i);
+}
+Array.prototype.Sum = function()
 {
     return this.reduce(function(x, y) { return x + y; }, 0);
 }
@@ -15,7 +19,7 @@ Array.prototype.sum = function()
 //==================================================================================================
 
 // Слияние двух массивов.
-JA.Func.zip_with = function(a, b, f)
+JA.Func.ZipWith = function(a, b, f)
 {
     var res = [];
 
