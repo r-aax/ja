@@ -3,18 +3,18 @@
  */
 
 /* Основной стиль. */
-body, table, tr, td, hr, iframe
+body, table, tr, td, th, hr, iframe
 {
     color : #000000;
     font-family : verdana, sans-serif;
-    font-size : 13pt;
-    padding : 2px 2px 2px 2px;
+    font-size : 12pt;
+    padding : 4px 4px 4px 4px;
 }
 
 /* Увеличенный шрифт. */
 font.big-font
 {
-    font-size : 15pt;
+    font-size : 14pt;
     font-weight : 900;
 }
 
@@ -29,6 +29,7 @@ table.sketch, iframe
 {
     width : 100%;
     height : 100%;
+    padding : 0px 0px 0px 0px;
 }
 
 /* HR. */
@@ -60,5 +61,5 @@ img
 /* Секция в отчете. */
 td.section
 {
-    background-color : #DDDDDD;
+    background-color : mistyrose;
 }

@@ -13,15 +13,43 @@ JA
     <meta name="keywords" content="">
     <link rel="stylesheet" href="style.css" type="text/css" title="default" media="screen">
     <title>Тарифы МСЦ РАН 2020</title>
+    <script type="text/javascript" language="JavaScript" src="../../js/Func.js"></script>
     <script type="text/javascript" language="JavaScript" src="../../js/FTree.js"></script>
     <script type="text/javascript" language="JavaScript" src="calc_resources.js"></script>
+    <script type="text/javascript" language="JavaScript" src="amortization.js"></script>
+    <script type="text/javascript" language="JavaScript" src="private_data.js"></script>
 
 <script type="text/javascript" language="JavaScript">
 <!--
 // Загрузка страницы.
 function on_load()
 {
-    document.getElementById("calc_resources_div").innerHTML = get_calc_nodes_configuration_table_HTML();
+    // Конфигурация вычислительных узлов.
+    var calc_nodes_conf_table = CalcNodesConfigurationTable();
+    document.getElementById("calc_nodes_conf_div").innerHTML =
+        get_calc_nodes_configuration_table_HTML(calc_nodes_conf_table);
+
+    // Состав вычислительного поля.
+    var calc_segments_sched_table = CalcSegmentsScheduleTable();
+    document.getElementById("calc_segments_sched_div").innerHTML =
+        get_calc_segments_schedule_table_HTML(calc_segments_sched_table);
+
+    // Теперь считаем полное количество узлочасов каждого типа.
+    calculate_full_node_hours(calc_nodes_conf_table, calc_segments_sched_table);
+    // А дальше сразу выводим таблицу с конфигурацией еще раз.
+    document.getElementById("calc_nodes_conf_div2").innerHTML =
+        get_calc_nodes_configuration_table_HTML(calc_nodes_conf_table);
+
+    // Таблица амортизации.
+    var amort_table = AmortizationTable();
+    calculate_amortization(amort_table);
+    document.getElementById("amortization_table_div").innerHTML =
+        get_amortization_table_HTML(amort_table);
+
+    // Распределяем амортизацию и выводим таблицу еще раз.
+    distribute_amortization(calc_nodes_conf_table, amort_table);
+    document.getElementById("calc_nodes_conf_div3").innerHTML =
+        get_calc_nodes_configuration_table_HTML(calc_nodes_conf_table);
 }
 -->
 </script>
@@ -36,12 +64,54 @@ function on_load()
         <!-- Вычислительные ресурсы. -->
         <tr height="25px">
             <td class="section">
-                <center><font class="big-font">Вычислительные ресурсы</font></center>
+                <center><i>Конфигурация вычислительных узлов</i></center>
             </td>
         </tr>
         <tr>
             <td>
-                <div id="calc_resources_div"></div>
+                <div id="calc_nodes_conf_div"></div>
+            </td>
+        </tr>
+        <tr height="25px">
+            <td class="section">
+                <center><i>Конфигурация вычислительного поля на 2020-й год</i></center>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="calc_segments_sched_div"></div>
+            </td>
+        </tr>
+        <tr height="25px">
+            <td class="section">
+                <center><i>Конфигурация вычислительных узлов с подсчетом полного количества узлочасов</i></center>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="calc_nodes_conf_div2"></div>
+            </td>
+        </tr>
+
+        <!-- Таблица амортизациии. -->
+        <tr height="25px">
+            <td class="section">
+                <center><i>Таблица амортизации</i></center>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="amortization_table_div"></div>
+            </td>
+        </tr>
+        <tr height="25px">
+            <td class="section">
+                <center><i>Распределение амортизации по вычислительным узлам</i></center>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="calc_nodes_conf_div3"></div>
             </td>
         </tr>
 
