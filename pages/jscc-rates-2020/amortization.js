@@ -95,9 +95,10 @@ AmortizationBank.prototype.Spread = function(year, month, money, months)
 //==================================================================================================
 
 // Строка таблицы амортизации.
-AmortizationLine = function(node_names, date_point, money, years)
+AmortizationLine = function(node_names, comment, date_point, money, years)
 {
     this.NodeNames = node_names;
+    this.Comment = comment;
     this.DatePoint = date_point;
     this.Money = money;
     this.Years = years;
@@ -111,7 +112,7 @@ calculate_amortization = function(t)
     for (var i = 0; i < t.length; i++)
     {
         line = t[i];
-        line.Bank = new AmortizationBank(2014, 0, 200);
+        line.Bank = new AmortizationBank(2015, 0, 300);
 
         // Распределяем амортизацию сразу и по-тупому.
         line.Bank.Spread(line.DatePoint.getFullYear(),
@@ -119,10 +120,15 @@ calculate_amortization = function(t)
                          line.Money,
                          line.Years * 12);
 
-        // Май 2019 - точка X, после нее все перераспределяем заново.
-        var x = line.Bank.GetAllFrom(2019, 4);
-        line.Bank.SetAllFrom(2019, 4, 0.0);
-        line.Bank.Spread(2019, 4, x, 48);
+        // Перераспределение для всего оборудования, которое поставлено
+        // до мая включительно (раньше июня).
+        if (line.DatePoint < new Date(2019, 5, 1))
+        {
+            // Май 2019 - точка X, после нее все перераспределяем заново.
+            var x = line.Bank.GetAllFrom(2019, 4);
+            line.Bank.SetAllFrom(2019, 4, 0.0);
+            line.Bank.Spread(2019, 4, x, 48);
+        }
     }
 }
 
@@ -134,12 +140,14 @@ get_amortization_table_HTML = function(t)
     var head = "<table border=\"0\" align=\"center\">";
     var foot = "</table>";
     var bg = "#DDDDDD";
-    var year_from = 2014;
+    var bg2 = "#F5F5F5";
+    var year_from = 2015;
     var year_to = 2023;
 
     head = head + "<tr>";
     head = head + "<th bgcolor=\"" + bg + "\">узлы</th>";
-    head = head + "<th bgcolor=\"" + bg + "\">дата</th>";
+    head = head + "<th bgcolor=\"" + bg + "\">договор</th>";
+    head = head + "<th bgcolor=\"" + bg + "\">поставка</th>";
     head = head + "<th bgcolor=\"" + bg + "\">сумма</th>";
     head = head + "<th bgcolor=\"" + bg + "\">годы</th>";
     for (var i = year_from; i <= year_to; i++)
@@ -165,6 +173,7 @@ get_amortization_table_HTML = function(t)
 
                 res = res + "<tr>";
                 res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" + names_str + "</td>"
+                res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" + al.Comment + "</td>"
                 res = res + "<td bgcolor=\"" + bg + "\">" +
                             al.DatePoint.getFullYear() + "-" +
                             fun_add_0_to_digit(al.DatePoint.getMonth() + 1) + "-" +
@@ -178,7 +187,7 @@ get_amortization_table_HTML = function(t)
                     var bb = (i == 2020) ? "<b><font color=\"indianred\">" : "";
                     var be = (i == 2020) ? "</font></b>" : "";
 
-                    res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" +
+                    res = res + "<td bgcolor=\"" + bg2 + "\" align=\"right\">" +
                                 "<font size=\"-2\">" +
                                 bb + al.Bank.GetYear(i).toLocaleString() + be +
                                 "</font></td>";
@@ -192,6 +201,7 @@ get_amortization_table_HTML = function(t)
         );
 
     html = html + "<tr>";
+    html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
     html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
     html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
     html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
@@ -231,7 +241,7 @@ distribute_amortization = function(confs, amort)
 
         if (line.NodeNames != undefined)
         {
-            var find_conf = confs.filter(function(c) { return c.Name == line.NodeNames; });
+            var find_conf = confs.filter(c => c.Name == line.NodeNames);
 
             if (find_conf.length > 0)
             {
