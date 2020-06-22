@@ -15,11 +15,12 @@
 //==================================================================================================
 
 // Конфигурация вычислительного узла.
-CalcNodeConfiguration = function(is_active, name, descr)
+CalcNodeConfiguration = function(is_active, name, descr, energy)
 {
     this.IsActive = is_active;
     this.Name = name;
     this.Description = descr;
+    this.Energy = energy;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -29,14 +30,14 @@ CalcNodesConfigurationTable = function()
 {
     var table =
     [
-        new CalcNodeConfiguration(0, "100k", "MVS-100K"),
-        new CalcNodeConfiguration(1,   "tr", "Tornado"),
-        new CalcNodeConfiguration(0,   "ps", "Petastream"),
-        new CalcNodeConfiguration(1,   "hw", "Haswell"),
-        new CalcNodeConfiguration(1,   "bw", "Broadwell"),
-        new CalcNodeConfiguration(1,  "knl", "Knights Landing"),
-        new CalcNodeConfiguration(1,   "sl", "Skylake"),
-        new CalcNodeConfiguration(1,   "cl", "Cascade Lake")
+        new CalcNodeConfiguration(0, "100k", "MVS-100K",        ( 36.0 / 110) * 2.00),
+        new CalcNodeConfiguration(1,   "tr", "Tornado",         (223.0 / 207) * 1.25),
+        new CalcNodeConfiguration(0,   "ps", "Petastream",      ( 15.0 /   8) * 1.25),
+        new CalcNodeConfiguration(1,   "hw", "Haswell",         ( 28.0 /  42) * 1.06),
+        new CalcNodeConfiguration(1,   "bw", "Broadwell",       ( 91.0 / 136) * 1.06),
+        new CalcNodeConfiguration(1,  "knl", "Knights Landing", ( 29.0 /  38) * 1.06),
+        new CalcNodeConfiguration(1,   "sl", "Skylake",         ( 37.0 /  58) * 1.06),
+        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    ( 46.0 /  51) * 1.06)
     ];
 
     // Отбираем только разрешенные конфигурации.
@@ -57,6 +58,7 @@ get_calc_nodes_configuration_table_HTML = function(t)
     head = head + "<tr>";
     head = head + "<th bgcolor=\"" + bg + "\">узел</th>";
     head = head + "<th bgcolor=\"" + bg + "\">описание</th>";
+    head = head + "<th bgcolor=\"" + bg + "\">энергия</th>";
     if (t[0].FullNodeHours != undefined)
     {
         head = head + "<th bgcolor=\"" + bg + "\">узлочасы</th>";
@@ -64,8 +66,8 @@ get_calc_nodes_configuration_table_HTML = function(t)
     }
     if (t[0].Amort2020 != undefined)
     {
-        head = head + "<th bgcolor=\"" + bg + "\">амортизация 2020</th>";
-        head = head + "<th bgcolor=\"" + bg + "\">амортизация узлочаса 2020</th>";
+        head = head + "<th bgcolor=\"" + bg + "\">ам. 2020</th>";
+        head = head + "<th bgcolor=\"" + bg + "\">ам. у*ч 2020</th>";
     }
     head = head + "</tr>";
 
@@ -81,6 +83,9 @@ get_calc_nodes_configuration_table_HTML = function(t)
                           "</td>" +
                           "<td bgcolor=\"" + bg + "\">" +
                           conf.Description +
+                          "</td>" +
+                          "<td bgcolor=\"" + bg + "\">" +
+                          conf.Energy.toFixed(3) +
                           "</td>";
 
                 if (conf.FullNodeHours != undefined)
