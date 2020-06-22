@@ -74,6 +74,18 @@ get_calc_nodes_configuration_table_HTML = function(t)
     {
         head = head + "<th bgcolor=\"" + bg_money + "\">ээ. у*ч</th>";
     }
+    if (t[0].OtherCost != undefined)
+    {
+        head = head + "<th bgcolor=\"" + bg_money + "\">др. у*ч</th>";
+    }
+    if (t[0].SumCost != undefined)
+    {
+        head = head + "<th bgcolor=\"" + bg_money + "\">вс. у*ч</th>";
+    }
+    if (t[0].Rate != undefined)
+    {
+        head = head + "<th bgcolor=\"" + bg_money + "\">тариф</th>";
+    }
     head = head + "</tr>";
 
     var html =
@@ -113,6 +125,24 @@ get_calc_nodes_configuration_table_HTML = function(t)
                 {
                     res = res + "<td bgcolor=\"" + bg_money + "\" align=\"right\">" +
                           conf.EnergyCost.toLocaleString() + "</td>";
+                }
+
+                if (conf.OtherCost != undefined)
+                {
+                    res = res + "<td bgcolor=\"" + bg_money + "\" align=\"right\">" +
+                          conf.OtherCost.toLocaleString() + "</td>";
+                }
+
+                if (conf.SumCost != undefined)
+                {
+                    res = res + "<td bgcolor=\"" + bg_money + "\" align=\"right\">" +
+                          conf.SumCost.toLocaleString() + "</td>";
+                }
+
+                if (conf.Rate != undefined)
+                {
+                    res = res + "<td bgcolor=\"" + bg_money + "\" align=\"right\">" +
+                          conf.Rate.toLocaleString() + "</td>";
                 }
 
                 res = res + "</tr>";
@@ -234,6 +264,19 @@ calculate_energy_costs = function(confs)
     var calc_energy_cost = function(e) { return e * tkwh; };
 
     confs.forEach(c => c.EnergyCost = calc_energy_cost(c.Energy));
+}
+
+// Другие затраты.
+calculate_other_costs = function(confs, tot)
+{
+    confs.forEach(c => c.OtherCost = tot * c.FullNodeHoursWeight / c.FullNodeHours);
+}
+
+// Суммирование всех затрат.
+summarize_all_costs = function(confs)
+{
+    confs.forEach(c => c.SumCost = c.NodeHourAmort2020 + c.EnergyCost + c.OtherCost);
+    confs.forEach(c => c.Rate = c.SumCost * 1.15);
 }
 
 //==================================================================================================
