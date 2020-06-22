@@ -50,6 +50,11 @@ function on_load()
     distribute_amortization(calc_nodes_conf_table, amort_table);
     document.getElementById("calc_nodes_conf_div3").innerHTML =
         get_calc_nodes_configuration_table_HTML(calc_nodes_conf_table);
+
+    // Вычисление других затрат.
+    calculate_energy_costs(calc_nodes_conf_table);
+    document.getElementById("calc_nodes_conf_div4").innerHTML =
+        get_calc_nodes_configuration_table_HTML(calc_nodes_conf_table);
 }
 -->
 </script>
@@ -113,6 +118,18 @@ function on_load()
             <td>
                 <div id="calc_nodes_conf_div3"></div>
             </td>
+        </tr>
+
+        <!-- Остальные затраты. -->
+        <tr height="25px">
+            <td class="section">
+                <center><i>Вычисление других затрат</i></center>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="calc_nodes_conf_div4"></div>
+            <td>
         </tr>
 
         <!-- Футер. -->

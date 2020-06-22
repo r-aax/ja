@@ -54,6 +54,7 @@ get_calc_nodes_configuration_table_HTML = function(t)
     var head = "<table border=\"0\" align=\"center\">";
     var foot = "</table>";
     var bg = "lightsteelblue";
+    var bg_money = "lightgreen";
 
     head = head + "<tr>";
     head = head + "<th bgcolor=\"" + bg + "\">узел</th>";
@@ -67,7 +68,11 @@ get_calc_nodes_configuration_table_HTML = function(t)
     if (t[0].Amort2020 != undefined)
     {
         head = head + "<th bgcolor=\"" + bg + "\">ам. 2020</th>";
-        head = head + "<th bgcolor=\"" + bg + "\">ам. у*ч 2020</th>";
+        head = head + "<th bgcolor=\"" + bg_money + "\">ам. у*ч</th>";
+    }
+    if (t[0].EnergyCost != undefined)
+    {
+        head = head + "<th bgcolor=\"" + bg_money + "\">ээ. у*ч</th>";
     }
     head = head + "</tr>";
 
@@ -100,8 +105,14 @@ get_calc_nodes_configuration_table_HTML = function(t)
                 {
                     res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" +
                           conf.Amort2020.toLocaleString() + "</td>";
-                    res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" +
+                    res = res + "<td bgcolor=\"" + bg_money + "\" align=\"right\">" +
                           conf.NodeHourAmort2020.toLocaleString() + "</td>";
+                }
+
+                if (conf.EnergyCost != undefined)
+                {
+                    res = res + "<td bgcolor=\"" + bg_money + "\" align=\"right\">" +
+                          conf.EnergyCost.toLocaleString() + "</td>";
                 }
 
                 res = res + "</tr>";
@@ -210,6 +221,19 @@ calculate_full_node_hours = function(confs, scheds)
     // А теперь добавим вес.
     var total_node_hours = confs.map(function(c) { return c.FullNodeHours; }).Sum();
     confs.forEach(function(c) { c.FullNodeHoursWeight = c.FullNodeHours / total_node_hours; });
+}
+
+//==================================================================================================
+
+// Вычисление затрат на энергию.
+calculate_energy_costs = function(confs)
+{
+    var kwh = 4.46;
+    var kwm = 734.0;
+    var tkwh = kwh + kwm / (30.0 * 24.0);
+    var calc_energy_cost = function(e) { return e * tkwh; };
+
+    confs.forEach(c => c.EnergyCost = calc_energy_cost(c.Energy));
 }
 
 //==================================================================================================
