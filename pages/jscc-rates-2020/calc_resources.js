@@ -15,11 +15,12 @@
 //==================================================================================================
 
 // Конфигурация вычислительного узла.
-CalcNodeConfiguration = function(is_active, name, descr, energy)
+CalcNodeConfiguration = function(is_active, name, descr, usefull, energy)
 {
     this.IsActive = is_active;
     this.Name = name;
     this.Description = descr;
+    this.Usefull = usefull;
     this.Energy = energy;
 }
 
@@ -30,14 +31,14 @@ CalcNodesConfigurationTable = function()
 {
     var table =
     [
-        new CalcNodeConfiguration(0, "100k", "MVS-100K",        ( 36.0 / 110) * 2.00),
-        new CalcNodeConfiguration(1,   "tr", "Tornado",         (223.0 / 207) * 1.25),
-        new CalcNodeConfiguration(0,   "ps", "Petastream",      ( 15.0 /   8) * 1.25),
-        new CalcNodeConfiguration(1,   "hw", "Haswell",         ( 28.0 /  42) * 1.06),
-        new CalcNodeConfiguration(1,   "bw", "Broadwell",       ( 91.0 / 136) * 1.06),
-        new CalcNodeConfiguration(1,  "knl", "Knights Landing", ( 29.0 /  38) * 1.06),
-        new CalcNodeConfiguration(1,   "sl", "Skylake",         ( 37.0 /  58) * 1.06),
-        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    ( 46.0 /  51) * 1.06)
+        new CalcNodeConfiguration(0, "100k", "MVS-100K",        1.00, ( 36.0 / 110) * 2.00),
+        new CalcNodeConfiguration(1,   "tr", "Tornado",         0.50, (223.0 / 207) * 1.25),
+        new CalcNodeConfiguration(0,   "ps", "Petastream",      1.00, ( 15.0 /   8) * 1.25),
+        new CalcNodeConfiguration(1,   "hw", "Haswell",         1.00, ( 28.0 /  42) * 1.06),
+        new CalcNodeConfiguration(1,   "bw", "Broadwell",       1.00, ( 91.0 / 136) * 1.06),
+        new CalcNodeConfiguration(1,  "knl", "Knights Landing", 1.00, ( 29.0 /  38) * 1.06),
+        new CalcNodeConfiguration(1,   "sl", "Skylake",         1.00, ( 37.0 /  58) * 1.06),
+        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    1.00, ( 46.0 /  51) * 1.06)
     ];
 
     // Отбираем только разрешенные конфигурации.
@@ -59,6 +60,7 @@ get_calc_nodes_configuration_table_HTML = function(t)
     head = head + "<tr>";
     head = head + "<th bgcolor=\"" + bg + "\">узел</th>";
     head = head + "<th bgcolor=\"" + bg + "\">описание</th>";
+    head = head + "<th bgcolor=\"" + bg + "\">полезность</th>";
     head = head + "<th bgcolor=\"" + bg + "\">энергия</th>";
     if (t[0].FullNodeHours != undefined)
     {
@@ -73,6 +75,10 @@ get_calc_nodes_configuration_table_HTML = function(t)
     if (t[0].EnergyCost != undefined)
     {
         head = head + "<th bgcolor=\"" + bg_money + "\">ээ. у*ч</th>";
+    }
+    if (t[0].RepairCost != undefined)
+    {
+        head = head + "<th bgcolor=\"" + bg_money + "\">рм. у*ч</th>";
     }
     if (t[0].OtherCost != undefined)
     {
@@ -102,6 +108,9 @@ get_calc_nodes_configuration_table_HTML = function(t)
                           conf.Description +
                           "</td>" +
                           "<td bgcolor=\"" + bg + "\">" +
+                          conf.Usefull +
+                          "</td>" +
+                          "<td bgcolor=\"" + bg + "\">" +
                           conf.Energy.toFixed(3) +
                           "</td>";
 
@@ -125,6 +134,12 @@ get_calc_nodes_configuration_table_HTML = function(t)
                 {
                     res = res + "<td bgcolor=\"" + bg_money + "\" align=\"right\">" +
                           conf.EnergyCost.toLocaleString() + "</td>";
+                }
+
+                if (conf.RepairCost != undefined)
+                {
+                    res = res + "<td bgcolor=\"" + bg_money + "\" align=\"right\">" +
+                          conf.RepairCost.toLocaleString() + "</td>";
                 }
 
                 if (conf.OtherCost != undefined)
@@ -266,16 +281,31 @@ calculate_energy_costs = function(confs)
     confs.forEach(c => c.EnergyCost = calc_energy_cost(c.Energy));
 }
 
+// Вычисление затрат на ремонт.
+calculate_repair_costs = function(confs)
+{
+    confs.forEach(c => c.RepairCost = 0.0);
+    confs.filter(c => c.Name == "hw")[0].RepairCost = 175000.0 / (365.0 * 24.0);
+    confs.filter(c => c.Name == "bw")[0].RepairCost = 150000.0 / (365.0 * 24.0);
+}
+
 // Другие затраты.
 calculate_other_costs = function(confs, tot)
 {
-    confs.forEach(c => c.OtherCost = tot * c.FullNodeHoursWeight / c.FullNodeHours);
+    var ks = confs.map(c => c.FullNodeHours * c.Usefull);
+    var sum_ks = ks.Sum();
+    var ks = ks.map(k => k / sum_ks);
+
+    for (var i = 0; i < confs.length; i++)
+    {
+        confs[i].OtherCost = tot * ks[i] / confs[i].FullNodeHours;
+    }
 }
 
 // Суммирование всех затрат.
 summarize_all_costs = function(confs)
 {
-    confs.forEach(c => c.SumCost = c.NodeHourAmort2020 + c.EnergyCost + c.OtherCost);
+    confs.forEach(c => c.SumCost = c.NodeHourAmort2020 + c.EnergyCost + c.RepairCost + c.OtherCost);
     confs.forEach(c => c.Rate = c.SumCost * 1.15);
 }
 

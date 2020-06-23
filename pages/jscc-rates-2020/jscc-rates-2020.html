@@ -53,6 +53,7 @@ function on_load()
 
     // Вычисление других затрат.
     calculate_energy_costs(calc_nodes_conf_table);
+    calculate_repair_costs(calc_nodes_conf_table);
     calculate_other_costs(calc_nodes_conf_table, other_costs());
     summarize_all_costs(calc_nodes_conf_table);
     document.getElementById("calc_nodes_conf_div4").innerHTML =
@@ -62,15 +63,18 @@ function on_load()
     nh = calc_nodes_conf_table.map(c => c.FullNodeHours);
     am = calc_nodes_conf_table.map(c => c.NodeHourAmort2020);
     ee = calc_nodes_conf_table.map(c => c.EnergyCost);
+    rp = calc_nodes_conf_table.map(c => c.RepairCost);
     ot = calc_nodes_conf_table.map(c => c.OtherCost);
     am = JA.Func.ZipWith(nh, am, (a, b) => a * b).Sum();
     ee = JA.Func.ZipWith(nh, ee, (a, b) => a * b).Sum();
+    rp = JA.Func.ZipWith(nh, rp, (a, b) => a * b).Sum();
     ot = JA.Func.ZipWith(nh, ot, (a, b) => a * b).Sum();
     document.getElementById("total_div").innerHTML =
         "Всего амортизации     : " + am.toLocaleString() + "<br>" +
         "Всего электроэнергии  : " + ee.toLocaleString() + "<br>" +
+        "Всего ремонт узлов    : " + rp.toLocaleString() + "<br>" +
         "Всего других расходов : " + ot.toLocaleString() + "<br>" +
-        "Всего суммарно        : " + (am + ee + ot).toLocaleString() + "<br>";
+        "Всего суммарно        : " + (am + ee + rp + ot).toLocaleString() + "<br>";
 }
 -->
 </script>
