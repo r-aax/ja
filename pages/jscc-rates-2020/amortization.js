@@ -166,9 +166,9 @@ get_amortization_table_HTML = function(t)
                 var res = acc;
                 var names_str = al.NodeNames;
 
-                if (names_str == undefined)
+                if (names_str.length > 1)
                 {
-                    names_str = "<i><font color=\"darkgrey\">все системы</font></i>";
+                    names_str = "<i><font color=\"darkgrey\">" + al.NodeNames + "</font></i>";
                 }
 
                 res = res + "<tr>";
@@ -239,26 +239,16 @@ distribute_amortization = function(confs, amort)
     {
         var line = amort[i];
 
-        if (line.NodeNames != undefined)
+        // Амортизация считается одинаковым образом как для распределения на одну систему,
+        // так и для распределения на несколько систем.
+        var distr_confs = find_calc_nodes_configurations(confs, line.NodeNames);
+        var distr_weights = distr_confs.map(c => c.FullNodeHoursWeight);
+        var distr_weights_sum = distr_weights.Sum();
+        distr_weights = distr_weights.map(w => w / distr_weights_sum);
+        var value = line.Bank.GetYear(2020);
+        for (var j = 0; j < distr_confs.length; j++)
         {
-            var find_conf = confs.filter(c => c.Name == line.NodeNames);
-
-            if (find_conf.length > 0)
-            {
-                var e = find_conf[0];
-
-                e.Amort2020 = e.Amort2020 + line.Bank.GetYear(2020);
-            }
-        }
-        else
-        {
-            // Если система не определена, то кидаем на все узлы с весовыми коэффициентами.
-            for (var j = 0; j < confs.length; j++)
-            {
-                var e = confs[j];
-
-                e.Amort2020 = e.Amort2020 + (e.FullNodeHoursWeight * line.Bank.GetYear(2020));
-            }
+            distr_confs[j].Amort2020 = distr_confs[j].Amort2020 + (distr_weights[j] * value);
         }
     }
 

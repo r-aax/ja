@@ -49,6 +49,29 @@ CalcNodesConfigurationTable = function()
 
 //--------------------------------------------------------------------------------------------------
 
+// Получение конфигурации по имени.
+find_calc_node_configuration = function(table, name)
+{
+    var list = table.filter(c => c.Name == name);
+
+    if (list.length != 1)
+    {
+        alert("get_calc_node_configuration : проблемы с получением конфигурации по имени");
+    }
+
+    return list[0];
+}
+
+//--------------------------------------------------------------------------------------------------
+
+// Получение списка конфигураций.
+find_calc_nodes_configurations = function(table, names)
+{
+    return names.map(n => find_calc_node_configuration(table, n));
+}
+
+//--------------------------------------------------------------------------------------------------
+
 // Сгенерировать HTML таблицы конфигураций вычислительных узлов.
 get_calc_nodes_configuration_table_HTML = function(t)
 {
