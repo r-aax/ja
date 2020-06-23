@@ -29,16 +29,44 @@ CalcNodeConfiguration = function(is_active, name, descr, usefull, energy)
 // Таблица конфигурации вычислительных узлов.
 CalcNodesConfigurationTable = function()
 {
+    /*
+     * [tr]:
+     * https://ark.intel.com/content/www/ru/ru/ark/products/64596/intel-xeon-processor-e5-2690-20m-cache-2-90-ghz-8-00-gt-s-intel-qpi.html
+     * https://technical.city/ru/cpu/Xeon-Phi-7110X#characteristics
+     *
+     * [hw]:
+     * https://ark.intel.com/content/www/us/en/ark/products/81059/intel-xeon-processor-e5-2697-v3-35m-cache-2-60-ghz.html
+     *
+     * [bw]:
+     * https://ark.intel.com/content/www/us/en/ark/products/91768/intel-xeon-processor-e5-2697a-v4-40m-cache-2-60-ghz.html
+     *
+     * [knl]:
+     * https://ark.intel.com/content/www/ru/ru/ark/products/95830/intel-xeon-phi-processor-7290-16gb-1-50-ghz-72-core.html
+     *
+     * [sl]:
+     * https://ark.intel.com/content/www/us/en/ark/products/120495/intel-xeon-gold-6154-processor-24-75m-cache-3-00-ghz.html
+     *
+     * [cl]:
+     * https://ark.intel.com/content/www/ru/ru/ark/products/192481/intel-xeon-platinum-8268-processor-35-75m-cache-2-90-ghz.html
+     */
+
     var table =
     [
+        /*
         new CalcNodeConfiguration(0, "100k", "MVS-100K",        1.00, ( 36.0 / 110) * 2.00),
-        new CalcNodeConfiguration(1,   "tr", "Tornado",         0.50, (223.0 / 207) * 1.25),
+        */
+
+        new CalcNodeConfiguration(1,   "tr", "Tornado",         0.50, ((2 * (0.135 + 0.3)) / 0.7) * 1.25),
+
+        /*
         new CalcNodeConfiguration(0,   "ps", "Petastream",      1.00, ( 15.0 /   8) * 1.25),
-        new CalcNodeConfiguration(1,   "hw", "Haswell",         1.00, ( 28.0 /  42) * 1.06),
-        new CalcNodeConfiguration(1,   "bw", "Broadwell",       1.00, ( 91.0 / 136) * 1.06),
-        new CalcNodeConfiguration(1,  "knl", "Knights Landing", 1.00, ( 29.0 /  38) * 1.06),
-        new CalcNodeConfiguration(1,   "sl", "Skylake",         1.00, ( 37.0 /  58) * 1.06),
-        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    1.00, ( 46.0 /  51) * 1.06)
+        */
+
+        new CalcNodeConfiguration(1,   "hw", "Haswell",         1.00, ((2 * 0.145) / 0.7) * 1.06),
+        new CalcNodeConfiguration(1,   "bw", "Broadwell",       1.00, ((2 * 0.145) / 0.7) * 1.06),
+        new CalcNodeConfiguration(1,  "knl", "Knights Landing", 1.00, ((0.245)     / 0.7) * 1.06),
+        new CalcNodeConfiguration(1,   "sl", "Skylake",         1.00, ((2 * 0.200) / 0.7) * 1.06),
+        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    1.00, ((2 * 0.205) / 0.7) * 1.06)
     ];
 
     // Отбираем только разрешенные конфигурации.
