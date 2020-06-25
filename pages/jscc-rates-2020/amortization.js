@@ -92,45 +92,104 @@ AmortizationBank.prototype.Spread = function(year, month, money, months)
     }
 }
 
+//--------------------------------------------------------------------------------------------------
+
+// Получение первого и последнего ненулевого индекса месяца.
+AmortizationBank.prototype.GetFirstNotNullMonthIndex = function()
+{
+    for (var i = 0; i < this.E.length; i++)
+    {
+        if (this.E[i] > 0.0)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+AmortizationBank.prototype.GetLastNotNullMonthIndex = function()
+{
+    for (var i = this.E.length - 1; i >= 0; i--)
+    {
+        if (this.E[i] > 0.0)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 //==================================================================================================
 
 // Строка таблицы амортизации.
-AmortizationLine = function(node_names, comment, date_point, money, years)
+AmortizationLine = function(node_names, comment, date_point, money)
 {
     this.NodeNames = node_names;
     this.Comment = comment;
     this.DatePoint = date_point;
     this.Money = money;
-    this.Years = years;
+
+    // Сразу создаем банк.
+    this.Bank = new AmortizationBank(2012, 0, 300);
+}
+
+//--------------------------------------------------------------------------------------------------
+
+// Получение индекса даты привязки.
+AmortizationLine.prototype.GetDatePointMonthIndex = function()
+{
+    return this.Bank.Index(this.DatePoint.getFullYear(),
+                           this.DatePoint.getMonth());
+}
+
+//--------------------------------------------------------------------------------------------------
+
+// Распределение амортизации с некоторого месяца на данное количество месяцев.
+AmortizationLine.prototype.SpreadAmortization = function(from_year, from_month, months)
+{
+    this.Bank.Spread(from_year, from_month, this.Money, months);
+}
+AmortizationLine.prototype.SpreadAmortizationFromThis = function(months)
+{
+    this.SpreadAmortization(this.DatePoint.getFullYear(),
+                            this.DatePoint.getMonth(),
+                            months);
+}
+AmortizationLine.prototype.SpreadAmortizationFromNext = function(months)
+{
+    this.SpreadAmortization(this.DatePoint.getFullYear(),
+                            this.DatePoint.getMonth() + 1,
+                            months);
 }
 
 //--------------------------------------------------------------------------------------------------
 
 // Расчет амортизации по годам.
-calculate_amortization = function(t)
-{
-    for (var i = 0; i < t.length; i++)
-    {
-        line = t[i];
-        line.Bank = new AmortizationBank(2015, 0, 300);
-
-        // Распределяем амортизацию сразу и по-тупому.
-        line.Bank.Spread(line.DatePoint.getFullYear(),
-                         line.DatePoint.getMonth() + 1,
-                         line.Money,
-                         line.Years * 12);
-
-        // Перераспределение для всего оборудования, которое поставлено
-        // до мая включительно (раньше июня).
-        if (line.DatePoint < new Date(2019, 5, 1))
-        {
-            // Май 2019 - точка X, после нее все перераспределяем заново.
-            var x = line.Bank.GetAllFrom(2019, 4);
-            line.Bank.SetAllFrom(2019, 4, 0.0);
-            line.Bank.Spread(2019, 4, x, 48);
-        }
-    }
-}
+//calculate_amortization = function(t)
+//{
+//    for (var i = 0; i < t.length; i++)
+//    {
+//        line = t[i];
+//        line.Bank = new AmortizationBank(2015, 0, 300);
+//
+//        // Распределяем амортизацию сразу и по-тупому.
+//        line.Bank.Spread(line.DatePoint.getFullYear(),
+//                         line.DatePoint.getMonth() + 1,
+//                         line.Money,
+//                         line.Years * 12);
+//
+//        // Перераспределение для всего оборудования, которое поставлено
+//        // до мая включительно (раньше июня).
+//        if (line.DatePoint < new Date(2019, 5, 1))
+//        {
+//            // Май 2019 - точка X, после нее все перераспределяем заново.
+//            var x = line.Bank.GetAllFrom(2019, 4);
+//            line.Bank.SetAllFrom(2019, 4, 0.0);
+//            line.Bank.Spread(2019, 4, x, 48);
+//        }
+//    }
+//}
 
 //--------------------------------------------------------------------------------------------------
 
@@ -141,15 +200,14 @@ get_amortization_table_HTML = function(t)
     var foot = "</table>";
     var bg = "#DDDDDD";
     var bg2 = "#F5F5F5";
-    var year_from = 2015;
-    var year_to = 2023;
+    var year_from = 2012;
+    var year_to = 2024;
 
     head = head + "<tr>";
     head = head + "<th bgcolor=\"" + bg + "\">узлы</th>";
     head = head + "<th bgcolor=\"" + bg + "\">договор</th>";
     head = head + "<th bgcolor=\"" + bg + "\">поставка</th>";
     head = head + "<th bgcolor=\"" + bg + "\">сумма</th>";
-    head = head + "<th bgcolor=\"" + bg + "\">годы</th>";
     for (var i = year_from; i <= year_to; i++)
     {
         head = head + "<th bgcolor=\"" + bg + "\">" + i + "</th>";
@@ -180,7 +238,6 @@ get_amortization_table_HTML = function(t)
                             fun_add_0_to_digit(al.DatePoint.getDate()) +
                             "</td>";
                 res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" + al.Money.toLocaleString() + "</td>";
-                res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" + al.Years + "</td>"
 
                 for (var i = year_from; i <= year_to; i++)
                 {
@@ -201,7 +258,6 @@ get_amortization_table_HTML = function(t)
         );
 
     html = html + "<tr>";
-    html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
     html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
     html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
     html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
