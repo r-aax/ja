@@ -150,12 +150,6 @@ AmortizationLine.prototype.SpreadAmortization = function(from_year, from_month, 
 {
     this.Bank.Spread(from_year, from_month, this.Money, months);
 }
-AmortizationLine.prototype.SpreadAmortizationFromThis = function(months)
-{
-    this.SpreadAmortization(this.DatePoint.getFullYear(),
-                            this.DatePoint.getMonth(),
-                            months);
-}
 AmortizationLine.prototype.SpreadAmortizationFromNext = function(months)
 {
     this.SpreadAmortization(this.DatePoint.getFullYear(),
