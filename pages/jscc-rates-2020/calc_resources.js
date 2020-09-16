@@ -56,7 +56,8 @@ CalcNodesConfigurationTable = function()
         new CalcNodeConfiguration(0, "100k", "MVS-100K",        1.00, ( 36.0 / 110) * 2.00),
         */
 
-        new CalcNodeConfiguration(1,   "tr", "Tornado",         0.50, ((2 * (0.135 + 0.3)) / 0.7) * 1.25),
+        // Опустить энергопотребление, чтобы попасть в цифру.
+        new CalcNodeConfiguration(1,   "tr", "Tornado",         0.50, ((2 * (0.13 + 0.25315)) / 0.7) * 1.2),
 
         /*
         new CalcNodeConfiguration(0,   "ps", "Petastream",      1.00, ( 15.0 /   8) * 1.25),
