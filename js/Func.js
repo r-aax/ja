@@ -13,7 +13,11 @@ Array.Range = function(n)
 }
 Array.prototype.Sum = function()
 {
-    return this.reduce(function(x, y) { return x + y; }, 0);
+    return this.reduce((x, y) => x + y, 0);
+}
+Array.prototype.Max = function()
+{
+    return this.reduce((x, y) => Math.max(x, y), -Infinity);
 }
 
 //==================================================================================================
