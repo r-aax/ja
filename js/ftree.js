@@ -30,40 +30,56 @@ JA.FTree.Tree = function(tp, nm, descr)
 
 //--------------------------------------------------------------------------------------------------
 
+// Количество детей.
+JA.FTree.Tree.prototype.ChildrenCount = function()
+{
+    return this.ChildrenEdges.length;
+}
+
+//--------------------------------------------------------------------------------------------------
+
+// Простые проверки дерева на корень и лист.
+// Определяются непосредственно из исходных данных.
+JA.FTree.Tree.prototype.IsRoot = function()
+{
+    return this.ParentEdge == undefined;
+}
+JA.FTree.Tree.prototype.IsLeaf = function()
+{
+    return this.ChildrenCount() == 0;
+}
+
+//--------------------------------------------------------------------------------------------------
+
 // Доступ к родителю и детям.
 JA.FTree.Tree.prototype.Parent = function()
 {
-    var edge = this.ParentEdge;
-
-    if (edge == undefined)
+    if (this.IsRoot())
     {
         return undefined;
     }
     else
     {
-        return edge.Pred;
+        return this.ParentEdge.Pred;
     }
-}
-JA.FTree.Tree.prototype.ChildrenCount = function()
-{
-    return this.ChildrenEdges.length;
 }
 JA.FTree.Tree.prototype.ChildEdge = function(i)
 {
     return this.ChildrenEdges[i];
 }
+JA.FTree.Tree.prototype.Child = function(i)
+{
+    return this.ChildEdge().Succ;
+}
 JA.FTree.Tree.prototype.Children = function()
 {
     return this.ChildrenEdges.map(function(e) { return e.Succ; });
 }
-JA.FTree.Tree.prototype.Child = function(i)
-{
-    return this.Children()[i];
-}
 
 //--------------------------------------------------------------------------------------------------
 
-// Получение индекса.
+// Получение индекса ребенка
+// (каким по счету ребенком является данный узел для своего родителя).
 JA.FTree.Tree.prototype.Index = function()
 {
     if (this.IsRoot())
@@ -77,7 +93,14 @@ JA.FTree.Tree.prototype.Index = function()
 }
 JA.FTree.Tree.prototype.IsFirstChild = function()
 {
-    return this.Index() == 0;
+    if (this.IsRoot())
+    {
+        return false;
+    }
+    else
+    {
+        return this.Index() == 0;
+    }
 }
 JA.FTree.Tree.prototype.IsLastChild = function()
 {
@@ -89,18 +112,6 @@ JA.FTree.Tree.prototype.IsLastChild = function()
     {
         return Index() == (this.Parent().ChildrenCount() - 1);
     }
-}
-
-//--------------------------------------------------------------------------------------------------
-
-// Простые ппроверки дерева на корень и лист.
-JA.FTree.Tree.prototype.IsRoot = function()
-{
-    return this.Parent() == undefined;
-}
-JA.FTree.Tree.prototype.IsLeaf = function()
-{
-    return this.ChildrenCount() == 0;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -198,7 +209,7 @@ JA.FTree.Tree.prototype.GetFlatNodes = function()
 
 //--------------------------------------------------------------------------------------------------
 
-// Обход всех узлов дерева в применением действия.
+// Обход всех узлов дерева с применением действия.
 JA.FTree.Tree.prototype.ForEach = function(fun)
 {
     fun(this);
