@@ -19,6 +19,14 @@ Item.prototype.Q = function(quantity)
 
     return c;
 }
+Item.prototype.IsPrimary = function()
+{
+    return this.Name[0] == 'P';
+}
+Item.prototype.IsSecondary = function()
+{
+    return this.Name[0] == 'S';
+}
 
 //==================================================================================================
 
@@ -102,13 +110,11 @@ BOM = function(item, stock, technology)
 }
 BOM.prototype.Expand = function()
 {
-    if (this.Item.Name[0] == 'P')
+    if (this.Item.IsPrimary())
     {
-        // This is primary part,
-        // there is nothing to expand.
         ;
     }
-    else if (this.Item.Name[0] == 'S')
+    else if (this.Item.IsSecondary())
     {
         // Find operation.
         var operation = this.Technology.FindForResult(this.Item);
