@@ -28,12 +28,27 @@ function example_01()
     var disk = new Item("P2", "disk", 0);
     var engine = new Item("P3", "engine", 0);
     var tire = new Item("P4", "tire", 0);
+    var color = new Item("P5", "color", 0);
+    var window_front = new Item("P6", "front window", 0);
+    var window_rf = new Item("P7", "right front window", 0);
+    var window_rb = new Item("P8", "right back window", 0);
+    var window_lf = new Item("P9", "left front window", 0);
+    var window_lb = new Item("P10", "left back window", 0);
+    var door_rf = new Item("P11", "right front door", 0);
+    var door_rb = new Item("P12", "right back door", 0);
+    var door_lf = new Item("P13", "left front door", 0);
+    var door_lb = new Item("P14", "left back door", 0);
+    var trunk = new Item("P15", "trunk", 0);
+    var hood = new Item("P16", "hood", 0);
 
     // Secondary parts.
     var car = new Item("S1", "car", 0);
-    var body_c = new Item("S4", "colored body", 0);
     var body_w = new Item("S2", "body with wheels", 0);
     var wheel = new Item("S3", "wheel", 0);
+    var body_c = new Item("S4", "colored body", 0);
+    var disk_c = new Item("S5", "colored disk", 0);
+    var body_e = new Item("S6", "body with wheels and engine", 0);
+    var body_d = new Item("S7", "body with doors, trunk and hood", 0);
 
     // Operations.
     var install_w = new Operation("O1", "install wheels",
@@ -43,26 +58,54 @@ function example_01()
     var install_e = new Operation("O2", "install engine",
                                   [body_w.Q(1), engine.Q(1)],
                                   3,
-                                  car.Q(1));
+                                  body_e.Q(1));
     var install_t = new Operation("O3", "install tire on disk",
-                                  [disk.Q(1), tire.Q(1)],
+                                  [disk_c.Q(1), tire.Q(1)],
                                   1,
                                   wheel.Q(1));
     var color_b = new Operation("O4", "color body",
-                                [body.Q(1)],
+                                [body_d.Q(1), color.Q(8)],
                                 1,
                                 body_c.Q(1));
+    var color_d = new Operation("O5", "color disk",
+                                [disk.Q(1), color.Q(2)],
+                                1,
+                                disk_c.Q(1));
+    var install_windows = new Operation("O6", "install windows",
+                                        [body_e.Q(1), window_front.Q(1), window_rf.Q(1), window_rb.Q(1), window_lf.Q(1), window_lb.Q(1)],
+                                        2,
+                                        car.Q(1));
+    var istall_doors_th = new Operation("O7", "install doors, trunk and hood",
+                                        [body.Q(1), door_rf.Q(1), door_rb.Q(1), door_lf.Q(1), door_lb.Q(1), trunk.Q(1), hood.Q(1)],
+                                        4,
+                                        body_d.Q(1));
 
     // General stock.
     var stock = new Stock();
-    stock.Items.push(body.Q(0));
-    stock.Items.push(disk.Q(0));
-    stock.Items.push(engine.Q(0));
-    stock.Items.push(tire.Q(0));
+    stock.Items.push(body.Q(100));
+    stock.Items.push(disk.Q(100));
+    stock.Items.push(engine.Q(100));
+    stock.Items.push(tire.Q(100));
+    stock.Items.push(color.Q(100));
+    stock.Items.push(window_front.Q(100));
+    stock.Items.push(window_rf.Q(100));
+    stock.Items.push(window_rb.Q(100));
+    stock.Items.push(window_lf.Q(100));
+    stock.Items.push(window_lb.Q(100));
+    stock.Items.push(door_rf.Q(100));
+    stock.Items.push(door_rb.Q(100));
+    stock.Items.push(door_lf.Q(100));
+    stock.Items.push(door_lb.Q(100));
+    stock.Items.push(trunk.Q(100));
+    stock.Items.push(hood.Q(100));
+    //
     stock.Items.push(car.Q(0));
-    stock.Items.push(body_c.Q(0));
     stock.Items.push(body_w.Q(0));
     stock.Items.push(wheel.Q(0));
+    stock.Items.push(body_c.Q(0));
+    stock.Items.push(disk_c.Q(0));
+    stock.Items.push(body_e.Q(0));
+    stock.Items.push(body_d.Q(0));
 
     // Technology.
     var technology = new Technology();
@@ -70,6 +113,9 @@ function example_01()
     technology.Operations.push(install_e);
     technology.Operations.push(install_t);
     technology.Operations.push(color_b);
+    technology.Operations.push(color_d);
+    technology.Operations.push(install_windows);
+    technology.Operations.push(istall_doors_th);
 
     // Create BOM Template.
     var bom = new BOM(car.Q(1), stock, technology);

@@ -169,58 +169,9 @@ BOM.prototype.HTML = function(val = 1)
 //--------------------------------------------------------------------------------------------------
 
 // Симуляция производства.
-//
-// Параметры:
-//   time_moment - текущий момент времени,
-//   allow_negative_promary_items - опция, позволяющая уходить в минус по первичным складским запасам.
-BOM.prototype.SimulateProduction = function(time_moment,
-                                            allow_negative_primary_items)
+BOM.prototype.SimulateProduction = function()
 {
-    var steps = 10;
-
-    // Надо произвести единицу товара и положить в сток.
-    while (this.Stock.Find(this.Item).Quantity < 1)
-    {
-        if (this.TryToProduceAnything(allow_negative_primary_items) == false)
-        {
-            alert("Can not produce anything");
-        }
-
-        steps = steps - 1;
-
-        if (steps == 0)
-        {
-            break;
-        }
-    }
-}
-BOM.prototype.IsReadyToProduceSecondaryItem = function(allow_negative_primary_items)
-{
-    if (this.Item.IsSecondary())
-    {
-        var operation = this.Operation;
-
-        for (var i = 0; i < this.Children.length; i++)
-        {
-            // Проверка, что позволяем уходить первичным материалам в минус.
-            // Даже не проверяем их.
-            if (this.Children[i].Item.IsPrimary() && allow_negative_primary_items)
-            {
-                continue;
-            }
-
-            if (this.Stock.Find(this.Children[i].Item).Quantity < operation.SourceItems[i].Quantity)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    this.RecProduce();
 }
 BOM.prototype.ProduceSecondaryItem = function()
 {
@@ -241,26 +192,21 @@ BOM.prototype.ProduceSecondaryItem = function()
         result_in_stock.Quantity += 1;
     }
 }
-BOM.prototype.TryToProduceAnything = function(allow_negative_primary_items)
+BOM.prototype.RecProduce = function()
 {
-    if (this.IsReadyToProduceSecondaryItem(allow_negative_primary_items))
+    if (this.Item.IsSecondary())
     {
-        alert("Ready to produce : " + this.Item.Name);
-        this.ProduceSecondaryItem();
+        var operation = this.Operation;
 
-        return true;
-    }
-    else
-    {
         for (var i = 0; i < this.Children.length; i++)
         {
-            if (this.Children[i].TryToProduceAnything(allow_negative_primary_items))
+            while (this.Stock.Find(this.Children[i].Item).Quantity < operation.SourceItems[i].Quantity)
             {
-                return true;
+                this.Children[i].RecProduce();
             }
         }
 
-        return false;
+        this.ProduceSecondaryItem();
     }
 }
 
