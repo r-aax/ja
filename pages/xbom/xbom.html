@@ -31,12 +31,13 @@ function example_01()
 
     // Secondary parts.
     var car = new Item("S1", "car", 0);
+    var body_c = new Item("S4", "colored body", 0);
     var body_w = new Item("S2", "body with wheels", 0);
     var wheel = new Item("S3", "wheel", 0);
 
     // Operations.
     var install_w = new Operation("O1", "install wheels",
-                                  [body.Q(1), wheel.Q(4)],
+                                  [body_c.Q(1), wheel.Q(4)],
                                   2,
                                   body_w.Q(1));
     var install_e = new Operation("O2", "install engine",
@@ -47,13 +48,19 @@ function example_01()
                                   [disk.Q(1), tire.Q(1)],
                                   1,
                                   wheel.Q(1));
+    var color_b = new Operation("O4", "color body",
+                                [body.Q(1)],
+                                1,
+                                body_c.Q(1));
 
     // General stock.
     var stock = new Stock();
     stock.Items.push(body.Q(0));
     stock.Items.push(disk.Q(0));
     stock.Items.push(engine.Q(0));
+    stock.Items.push(tire.Q(0));
     stock.Items.push(car.Q(0));
+    stock.Items.push(body_c.Q(0));
     stock.Items.push(body_w.Q(0));
     stock.Items.push(wheel.Q(0));
 
@@ -62,10 +69,15 @@ function example_01()
     technology.Operations.push(install_w);
     technology.Operations.push(install_e);
     technology.Operations.push(install_t);
+    technology.Operations.push(color_b);
 
     // Create BOM Template.
     var bom = new BOM(car.Q(1), stock, technology);
     bom.Expand();
+
+    // Production.
+    bom.SimulateProduction(time_moment = 0,
+                           allow_negative_primary_items = true);
 
     // Print.
     var stock_div = document.getElementById("stock");
@@ -74,10 +86,6 @@ function example_01()
     technology_div.innerHTML = technology.HTML();
     var bom_template_div = document.getElementById("bom_template");
     bom_template_div.innerHTML = bom.HTML();
-
-    // Production.
-    bom.SimulateProduction(time_moment = 0,
-                           allow_negative_primary_items = true);
 }
 
 // Загрузка.

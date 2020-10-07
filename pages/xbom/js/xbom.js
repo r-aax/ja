@@ -37,7 +37,7 @@ Stock = function()
 }
 Stock.prototype.Find = function(item)
 {
-    var items = this.Item.filter(x => x.Name = item.Name);
+    var items = this.Items.filter(x => x.Name == item.Name);
 
     return items[0];
 }
@@ -176,9 +176,91 @@ BOM.prototype.HTML = function(val = 1)
 BOM.prototype.SimulateProduction = function(time_moment,
                                             allow_negative_primary_items)
 {
-    while (this.Item.Quantity < 1)
+    var steps = 10;
+
+    // Надо произвести единицу товара и положить в сток.
+    while (this.Stock.Find(this.Item).Quantity < 1)
     {
-        alert("Production");
+        if (this.TryToProduceAnything(allow_negative_primary_items) == false)
+        {
+            alert("Can not produce anything");
+        }
+
+        steps = steps - 1;
+
+        if (steps == 0)
+        {
+            break;
+        }
+    }
+}
+BOM.prototype.IsReadyToProduceSecondaryItem = function(allow_negative_primary_items)
+{
+    if (this.Item.IsSecondary())
+    {
+        var operation = this.Operation;
+
+        for (var i = 0; i < this.Children.length; i++)
+        {
+            // Проверка, что позволяем уходить первичным материалам в минус.
+            // Даже не проверяем их.
+            if (this.Children[i].Item.IsPrimary() && allow_negative_primary_items)
+            {
+                continue;
+            }
+
+            if (this.Stock.Find(this.Children[i].Item).Quantity < operation.SourceItems[i].Quantity)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+BOM.prototype.ProduceSecondaryItem = function()
+{
+    if (this.Item.IsSecondary())
+    {
+        var operation = this.Operation;
+
+        for (var i = 0; i < this.Children.length; i++)
+        {
+            var item_in_stock = this.Stock.Find(this.Children[i].Item);
+            var item_in_operation = operation.SourceItems[i];
+            
+            item_in_stock.Quantity -= item_in_operation.Quantity;
+        }
+
+        var result_in_stock = this.Stock.Find(this.Item);
+
+        result_in_stock.Quantity += 1;
+    }
+}
+BOM.prototype.TryToProduceAnything = function(allow_negative_primary_items)
+{
+    if (this.IsReadyToProduceSecondaryItem(allow_negative_primary_items))
+    {
+        alert("Ready to produce : " + this.Item.Name);
+        this.ProduceSecondaryItem();
+
+        return true;
+    }
+    else
+    {
+        for (var i = 0; i < this.Children.length; i++)
+        {
+            if (this.Children[i].TryToProduceAnything(allow_negative_primary_items))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 
