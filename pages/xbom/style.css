@@ -24,11 +24,6 @@ iframe
     border : none;
 }
 
-table
-{
-    border : 1px solid black;
-}
-
 /* Максимальный размер элементов. */
 table.sketch, iframe
 {

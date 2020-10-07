@@ -20,6 +20,71 @@ JA
 
 <script type="text/javascript" language="JavaScript">
 <!--
+// Пример 1 - простая сборка.
+function example_01()
+{
+    // Primary items that can not be expanded.
+    var body = new Item("P1", "body", 0);
+    var disk = new Item("P2", "disk", 0);
+    var engine = new Item("P3", "engine", 0);
+    var tire = new Item("P4", "tire", 0);
+
+    // Secondary parts.
+    var car = new Item("S1", "car", 0);
+    var body_w = new Item("S2", "body with wheels", 0);
+    var wheel = new Item("S3", "wheel", 0);
+
+    // Operations.
+    var install_w = new Operation("O1", "install wheels",
+                                  [body.Q(1), wheel.Q(4)],
+                                  2,
+                                  body_w.Q(1));
+    var install_e = new Operation("O2", "install engine",
+                                  [body_w.Q(1), engine.Q(1)],
+                                  3,
+                                  car.Q(1));
+    var install_t = new Operation("O3", "install tire on disk",
+                                  [disk.Q(1), tire.Q(1)],
+                                  1,
+                                  wheel.Q(1));
+
+    // General stock.
+    var stock = new Stock();
+    stock.Items.push(body.Q(0));
+    stock.Items.push(disk.Q(0));
+    stock.Items.push(engine.Q(0));
+    stock.Items.push(car.Q(0));
+    stock.Items.push(body_w.Q(0));
+    stock.Items.push(wheel.Q(0));
+
+    // Technology.
+    var technology = new Technology();
+    technology.Operations.push(install_w);
+    technology.Operations.push(install_e);
+    technology.Operations.push(install_t);
+
+    // Create BOM Template.
+    var bom = new BOM(car.Q(1), stock, technology);
+    bom.Expand();
+
+    // Print.
+    var stock_div = document.getElementById("stock");
+    stock_div.innerHTML = stock.HTML();
+    var technology_div = document.getElementById("technology");
+    technology_div.innerHTML = technology.HTML();
+    var bom_template_div = document.getElementById("bom_template");
+    bom_template_div.innerHTML = bom.HTML();
+
+    // Production.
+    bom.SimulateProduction(time_moment = 0,
+                           allow_negative_primary_items = true);
+}
+
+// Загрузка.
+function on_load()
+{
+    example_01();
+}
 -->
 </script>
 
@@ -29,10 +94,11 @@ JA
     <table>
         <tr>
             <td>
-                <div align="center">
-                    <canvas width="600" height="600" id="area" align="center"></canvas>
-                </div>
-                <div align ="center" id="area_info"></div>
+                <div align ="center" id="stock"></div>
+                <br><br>
+                <div align ="center" id="technology"></div>
+                <br><br>
+                <div id="bom_template"></div>
             </td>
         </tr>
     </table>

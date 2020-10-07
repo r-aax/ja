@@ -19,6 +19,10 @@ Array.prototype.Max = function()
 {
     return this.reduce((x, y) => Math.max(x, y), -Infinity);
 }
+Array.prototype.MergeStrings = function()
+{
+    return this.reduce((x, y) => x + y, "");
+}
 
 //==================================================================================================
 
