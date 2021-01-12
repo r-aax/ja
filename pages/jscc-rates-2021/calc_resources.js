@@ -329,9 +329,8 @@ calculate_energy_costs = function(confs)
 // Вычисление затрат на ремонт.
 calculate_repair_costs = function(confs)
 {
+    // No repair cost.
     confs.forEach(c => c.RepairCost = 0.0);
-    confs.filter(c => c.Name == "hw")[0].RepairCost = 175000.0 / (365.0 * 24.0);
-    confs.filter(c => c.Name == "bw")[0].RepairCost = 150000.0 / (365.0 * 24.0);
 }
 
 // Другие затраты.
