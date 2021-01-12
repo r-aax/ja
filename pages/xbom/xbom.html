@@ -20,110 +20,171 @@ JA
 
 <script type="text/javascript" language="JavaScript">
 <!--
-// Пример 1 - простая сборка.
-function example_01()
+// Пример 0 - простая сборка корабля.
+function example_00()
 {
-    // Primary items that can not be expanded.
-    var body = new Item("P1", "body", 0);
-    var disk = new Item("P2", "disk", 0);
-    var engine = new Item("P3", "engine", 0);
-    var tire = new Item("P4", "tire", 0);
-    var color = new Item("P5", "color", 0);
-    var window_front = new Item("P6", "front window", 0);
-    var window_rf = new Item("P7", "right front window", 0);
-    var window_rb = new Item("P8", "right back window", 0);
-    var window_lf = new Item("P9", "left front window", 0);
-    var window_lb = new Item("P10", "left back window", 0);
-    var door_rf = new Item("P11", "right front door", 0);
-    var door_rb = new Item("P12", "right back door", 0);
-    var door_lf = new Item("P13", "left front door", 0);
-    var door_lb = new Item("P14", "left back door", 0);
-    var trunk = new Item("P15", "trunk", 0);
-    var hood = new Item("P16", "hood", 0);
+    var sudno            = new Item("Судно", "", 0);
+    var blok_1           = new Item("Блок 1", "", 0);
+    var blok_2           = new Item("Блок 2", "", 0);
+    var blok_3           = new Item("Блок 3", "", 0);
+    var blok_4           = new Item("Блок 4", "", 0);
+    var sekcia_105       = new Item("Секция 105", "", 0);
+    var sekcia_106       = new Item("Секция 106", "", 0);
+    var sekcia_107       = new Item("Секция 107", "", 0);
+    var sekcia_108       = new Item("Секция 108", "", 0);
+    var nastil_2         = new Item("Настил 2-го дна", "", 0);
+    var shpangout_31     = new Item("Шпангоут 31 Узел 4900-7000...", "", 0);
+    var shpangout_44     = new Item("Шпангоут 44 Узел 4900-7000...", "", 0);
+    var sechenie_9800    = new Item("Продольное сечение 9800 От ДП ПрБ", "", 0);
+    var shpangout_33_325 = new Item("Шпангоут 33+325 Узел 9800-10988", "", 0);
+    var rossyp           = new Item("Россыпь", "", 0);
+    var list_9_mm        = new Item("Лист 9 мм", "", 0);
+    var list_11_mm       = new Item("Лист 11 мм", "", 0);
+    var rebra_zh         = new Item("Ребра жесткости", "", 0);
+    var kniza            = new Item("Кница", "", 0);
 
-    // Secondary parts.
-    var car = new Item("S1", "car", 0);
-    var body_w = new Item("S2", "body with wheels", 0);
-    var wheel = new Item("S3", "wheel", 0);
-    var body_c = new Item("S4", "colored body", 0);
-    var disk_c = new Item("S5", "colored disk", 0);
-    var body_e = new Item("S6", "body with wheels and engine", 0);
-    var body_d = new Item("S7", "body with doors, trunk and hood", 0);
+    // Операции.
+    var sborka_shpangout_31 = new Operation("Сборка Шпангоут 31 Узел 4900-7000...", "",
+                                            [list_9_mm.Q(1), list_11_mm.Q(1), rebra_zh.Q(1), kniza.Q(1)],
+                                            0,
+                                            shpangout_31.Q(1));
+    var sborka_sekcia_105 = new Operation("Сборка Секция 105", "",
+                                          [nastil_2.Q(1), shpangout_31.Q(1), shpangout_44.Q(1), sechenie_9800.Q(1), shpangout_33_325.Q(1), rossyp.Q(1)],
+                                          0,
+                                          sekcia_105.Q(1));
+    var sborka_blok_1 = new Operation("Сборка Блок 1", "",
+                                      [sekcia_105.Q(1), sekcia_106.Q(1), sekcia_107.Q(1), sekcia_108.Q(1)],
+                                      0,
+                                      blok_1.Q(1));
+    var sborka_sudno = new Operation("Сборка Судно", "",
+                                     [blok_1.Q(1), blok_2.Q(1), blok_3.Q(1), blok_4.Q(1)],
+                                     0,
+                                     sudno.Q(1));
 
-    // Operations.
-    var install_w = new Operation("O1", "install wheels",
-                                  [body_c.Q(1), wheel.Q(4)],
-                                  2,
-                                  body_w.Q(1));
-    var install_e = new Operation("O2", "install engine",
-                                  [body_w.Q(1), engine.Q(1)],
-                                  3,
-                                  body_e.Q(1));
-    var install_t = new Operation("O3", "install tire on disk",
-                                  [disk_c.Q(1), tire.Q(1)],
-                                  1,
-                                  wheel.Q(1));
-    var color_b = new Operation("O4", "color body",
-                                [body_d.Q(1), color.Q(8)],
-                                1,
-                                body_c.Q(1));
-    var color_d = new Operation("O5", "color disk",
-                                [disk.Q(1), color.Q(2)],
-                                1,
-                                disk_c.Q(1));
-    var install_windows = new Operation("O6", "install windows",
-                                        [body_e.Q(1), window_front.Q(1), window_rf.Q(1), window_rb.Q(1), window_lf.Q(1), window_lb.Q(1)],
-                                        2,
-                                        car.Q(1));
-    var istall_doors_th = new Operation("O7", "install doors, trunk and hood",
-                                        [body.Q(1), door_rf.Q(1), door_rb.Q(1), door_lf.Q(1), door_lb.Q(1), trunk.Q(1), hood.Q(1)],
-                                        4,
-                                        body_d.Q(1));
-
-    // General stock.
+    // Stock.
     var stock = new Stock();
-    stock.Items.push(body.Q(100));
-    stock.Items.push(disk.Q(100));
-    stock.Items.push(engine.Q(100));
-    stock.Items.push(tire.Q(100));
-    stock.Items.push(color.Q(100));
-    stock.Items.push(window_front.Q(100));
-    stock.Items.push(window_rf.Q(100));
-    stock.Items.push(window_rb.Q(100));
-    stock.Items.push(window_lf.Q(100));
-    stock.Items.push(window_lb.Q(100));
-    stock.Items.push(door_rf.Q(100));
-    stock.Items.push(door_rb.Q(100));
-    stock.Items.push(door_lf.Q(100));
-    stock.Items.push(door_lb.Q(100));
-    stock.Items.push(trunk.Q(100));
-    stock.Items.push(hood.Q(100));
-    //
-    stock.Items.push(car.Q(0));
-    stock.Items.push(body_w.Q(0));
-    stock.Items.push(wheel.Q(0));
-    stock.Items.push(body_c.Q(0));
-    stock.Items.push(disk_c.Q(0));
-    stock.Items.push(body_e.Q(0));
-    stock.Items.push(body_d.Q(0));
+    stock.Items.push(sudno.Q(0));
+    stock.Items.push(blok_1.Q(10));
+    stock.Items.push(blok_2.Q(10));
+    stock.Items.push(blok_3.Q(10));
+    stock.Items.push(blok_4.Q(10));
+    stock.Items.push(sekcia_105.Q(10));
+    stock.Items.push(sekcia_106.Q(10));
+    stock.Items.push(sekcia_107.Q(10));
+    stock.Items.push(sekcia_108.Q(10));
+    stock.Items.push(nastil_2.Q(10));
+    stock.Items.push(shpangout_31.Q(10));
+    stock.Items.push(shpangout_44.Q(10));
+    stock.Items.push(sechenie_9800.Q(10));
+    stock.Items.push(shpangout_33_325.Q(10));
+    stock.Items.push(rossyp.Q(10));
+    stock.Items.push(list_9_mm.Q(10));
+    stock.Items.push(list_11_mm.Q(10));
+    stock.Items.push(rebra_zh.Q(10));
+    stock.Items.push(kniza.Q(10));
 
     // Technology.
     var technology = new Technology();
-    technology.Operations.push(install_w);
-    technology.Operations.push(install_e);
-    technology.Operations.push(install_t);
-    technology.Operations.push(color_b);
-    technology.Operations.push(color_d);
-    technology.Operations.push(install_windows);
-    technology.Operations.push(istall_doors_th);
+    technology.Operations.push(sborka_shpangout_31);
+    technology.Operations.push(sborka_sekcia_105);
+    technology.Operations.push(sborka_blok_1);
+    technology.Operations.push(sborka_sudno);
 
     // Create BOM Template.
-    var bom = new BOM(car.Q(1), stock, technology);
+    var bom = new BOM(sudno.Q(1), stock, technology);
     bom.Expand();
 
     // Production.
     bom.SimulateProduction(time_moment = 0,
                            allow_negative_primary_items = true);
+
+    // Print.
+    var stock_div = document.getElementById("stock");
+    stock_div.innerHTML = stock.HTML();
+    var technology_div = document.getElementById("technology");
+    technology_div.innerHTML = technology.HTML();
+    var bom_template_div = document.getElementById("bom_template");
+    bom_template_div.innerHTML = bom.HTML();
+}
+
+// Пример 1 - простая сборка.
+function example_01()
+{
+    // P
+    var block_a = new Item("P010", "Блок A", 0);
+    var color = new Item("P040", "Краска", 0);
+    // S
+    var product = new Item("S010", "Продукт", 0);
+    var carcas_with_a = new Item("S015", "Каркас с Блоком A", 0);
+    var carcas = new Item("S020", "Каркас", 0);
+    var block_b = new Item("S030", "Блок B", 0);
+    var panel = new Item("P020", "Панель", 0);
+    var kr = new Item("P030", "Крепеж", 0);
+    var d1 = new Item("P050", "Деталь 1", 0);
+    var d2 = new Item("P060", "Деталь 2", 0);
+    var d3 = new Item("P070", "Деталь 3", 0);
+    var panel_c = new Item("S040", "Окрашенная панель", 0);
+    var carcas_c = new Item("S018", "Окрашенный каркас", 0);
+
+    // Operations.
+    var assembly_product = new Operation("O010", "Сборка Продукт",
+                                         [carcas_with_a.Q(1), block_b.Q(4)],
+                                         2,
+                                         product.Q(1));
+    var ass_carcas_a = new Operation("O020", "Добавление Блока A",
+                                     [carcas_c.Q(1), block_a.Q(1)],
+                                     2,
+                                     carcas_with_a.Q(1));
+    var ass_block_b = new Operation("O030", "Сборка Блок B",
+                                    [panel_c.Q(4), kr.Q(4)],
+                                    3,
+                                    block_b.Q(1));
+    var ass_carcas = new Operation("O040", "Сборка Каркас",
+                                   [d1.Q(1), d2.Q(1), d3.Q(1)],
+                                   1,
+                                   carcas.Q(1));
+    var color_carcas = new Operation("O050", "Окраска каркаса",
+                                     [carcas.Q(1), color.Q(5)],
+                                     1,
+                                     carcas_c.Q(1));
+    var color_panel = new Operation("O060", "Окраска панели",
+                                     [panel.Q(1), color.Q(2)],
+                                     1,
+                                     panel_c.Q(1));
+
+    // General stock.
+    var stock = new Stock();
+    // P
+    stock.Items.push(block_a.Q(100));
+    stock.Items.push(panel.Q(100));
+    stock.Items.push(kr.Q(100));
+    stock.Items.push(color.Q(100));
+    stock.Items.push(d1.Q(100));
+    stock.Items.push(d2.Q(100));
+    stock.Items.push(d3.Q(100));
+    // S
+    stock.Items.push(product.Q(0));
+    stock.Items.push(carcas_with_a.Q(0));
+    stock.Items.push(carcas_c.Q(0));
+    stock.Items.push(carcas.Q(0));
+    stock.Items.push(block_b.Q(0));
+    stock.Items.push(panel_c.Q(0));
+
+    // Technology.
+    var technology = new Technology();
+    technology.Operations.push(assembly_product);
+    technology.Operations.push(ass_carcas_a);
+    technology.Operations.push(ass_block_b);
+    technology.Operations.push(ass_carcas);
+    technology.Operations.push(color_carcas);
+    technology.Operations.push(color_panel);
+
+    // Create BOM Template.
+    var bom = new BOM(product.Q(1), stock, technology);
+    bom.Expand();
+
+    // Production.
+    bom.SimulateProduction();
 
     // Print.
     var stock_div = document.getElementById("stock");
