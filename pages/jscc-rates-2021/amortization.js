@@ -319,7 +319,7 @@ distribute_amortization = function(confs, amort)
     // Амортизация на узлочас.
     for (var i = 0; i < confs.length; i++)
     {
-        confs[i].NodeHourAmort2020 = confs[i].Amort2021 / confs[i].FullNodeHours;
+        confs[i].NodeHourAmort2021 = confs[i].Amort2021 / confs[i].FullNodeHours;
     }
 }
 

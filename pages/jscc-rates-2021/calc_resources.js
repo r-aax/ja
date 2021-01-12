@@ -112,9 +112,9 @@ get_calc_nodes_configuration_table_HTML = function(t)
         head = head + "<th bgcolor=\"" + bg + "\">узлочасы</th>";
         head = head + "<th bgcolor=\"" + bg + "\">вес</th>";
     }
-    if (t[0].Amort2020 != undefined)
+    if (t[0].Amort2021 != undefined)
     {
-        head = head + "<th bgcolor=\"" + bg + "\">ам. 2020</th>";
+        head = head + "<th bgcolor=\"" + bg + "\">ам. 2021</th>";
         head = head + "<th bgcolor=\"" + bg_money + "\">ам. у*ч</th>";
     }
     if (t[0].EnergyCost != undefined)
@@ -167,12 +167,12 @@ get_calc_nodes_configuration_table_HTML = function(t)
                           conf.FullNodeHoursWeight.toFixed(3) + "</td>";
                 }
 
-                if (conf.Amort2020 != undefined)
+                if (conf.Amort2021 != undefined)
                 {
                     res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" +
-                          conf.Amort2020.toLocaleString() + "</td>";
+                          conf.Amort2021.toLocaleString() + "</td>";
                     res = res + "<td bgcolor=\"" + bg_money + "\" align=\"right\">" +
-                          conf.NodeHourAmort2020.toLocaleString() + "</td>";
+                          conf.NodeHourAmort2021.toLocaleString() + "</td>";
                 }
 
                 if (conf.EnergyCost != undefined)
@@ -350,7 +350,7 @@ calculate_other_costs = function(confs, tot)
 // Суммирование всех затрат.
 summarize_all_costs = function(confs)
 {
-    confs.forEach(c => c.SumCost = c.NodeHourAmort2020 + c.EnergyCost + c.RepairCost + c.OtherCost);
+    confs.forEach(c => c.SumCost = c.NodeHourAmort2021 + c.EnergyCost + c.RepairCost + c.OtherCost);
     confs.forEach(c => c.Rate = c.SumCost * 1.15);
 }
 
