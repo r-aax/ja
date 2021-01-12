@@ -206,8 +206,8 @@ get_amortization_table_HTML = function(t)
     var foot = "</table>";
     var bg = "#DDDDDD";
     var bg2 = "#F5F5F5";
-    var year_from = 2012;
-    var year_to = 2024;
+    var year_from = 2014;
+    var year_to = 2026;
 
     head = head + "<tr>";
     head = head + "<th bgcolor=\"" + bg + "\">узлы</th>";

@@ -48,26 +48,19 @@ CalcNodesConfigurationTable = function()
      *
      * [cl]:
      * https://ark.intel.com/content/www/ru/ru/ark/products/192481/intel-xeon-platinum-8268-processor-35-75m-cache-2-90-ghz.html
+     * https://ark.intel.com/content/www/us/en/ark/products/199351/intel-xeon-gold-6248r-processor-35-75m-cache-3-00-ghz.html
      */
+
+    var ex = 0.7;
 
     var table =
     [
-        /*
-        new CalcNodeConfiguration(0, "100k", "MVS-100K",        1.00, ( 36.0 / 110) * 2.00),
-        */
-
-        // Опустить энергопотребление, чтобы попасть в цифру.
-        new CalcNodeConfiguration(1,   "tr", "Tornado",         0.50, ((2 * (0.13 + 0.25315)) / 0.7) * 1.2),
-
-        /*
-        new CalcNodeConfiguration(0,   "ps", "Petastream",      1.00, ( 15.0 /   8) * 1.25),
-        */
-
-        new CalcNodeConfiguration(1,   "hw", "Haswell",         1.00, ((2 * 0.145) / 0.7) * 1.06),
-        new CalcNodeConfiguration(1,   "bw", "Broadwell",       1.00, ((2 * 0.145) / 0.7) * 1.06),
-        new CalcNodeConfiguration(1,  "knl", "Knights Landing", 1.00, ((0.245)     / 0.7) * 1.06),
-        new CalcNodeConfiguration(1,   "sl", "Skylake",         1.00, ((2 * 0.200) / 0.7) * 1.06),
-        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    1.00, ((2 * 0.205) / 0.7) * 1.06)
+        new CalcNodeConfiguration(1,   "tr", "Tornado",         0.50, (2 * (0.135 + 0.3)) * 1.20 / ex),
+        new CalcNodeConfiguration(1,   "hw", "Haswell",         1.00, (2 * (      0.145)) * 1.06 / ex),
+        new CalcNodeConfiguration(1,   "bw", "Broadwell",       1.00, (2 * (      0.145)) * 1.06 / ex),
+        new CalcNodeConfiguration(1,  "knl", "Knights Landing", 1.00, (1 * (      0.245)) * 1.06 / ex),
+        new CalcNodeConfiguration(1,   "sl", "Skylake",         1.00, (2 * (      0.200)) * 1.06 / ex),
+        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    1.00, (2 * (      0.205)) * 1.06 / ex)
     ];
 
     // Отбираем только разрешенные конфигурации.
@@ -287,7 +280,7 @@ get_calc_segments_schedule_table_HTML = function(t)
 // Подсчет полного количества узлочасов для узлов каждого типа.
 calculate_full_node_hours = function(confs, scheds)
 {
-    var mdays = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    var mdays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
     for (var i = 0; i < confs.length; i++)
     {
