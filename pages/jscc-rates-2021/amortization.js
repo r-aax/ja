@@ -1,5 +1,7 @@
 // Амортизация вычислительных систем.
 
+var TargetYear = 2021;
+
 //==================================================================================================
 
 // Реализация с распределением амортизации по месяцам.
@@ -247,8 +249,8 @@ get_amortization_table_HTML = function(t)
 
                 for (var i = year_from; i <= year_to; i++)
                 {
-                    var bb = (i == 2020) ? "<b><font color=\"indianred\">" : "";
-                    var be = (i == 2020) ? "</font></b>" : "";
+                    var bb = (i == TargetYear) ? "<b><font color=\"indianred\">" : "";
+                    var be = (i == TargetYear) ? "</font></b>" : "";
 
                     res = res + "<td bgcolor=\"" + bg2 + "\" align=\"right\">" +
                                 "<font size=\"-2\">" +
@@ -270,8 +272,8 @@ get_amortization_table_HTML = function(t)
     html = html + "<td bgcolor=\"" + bg + "\">&nbsp;</td>";
     for (var i = year_from; i <= year_to; i++)
     {
-        var bb = (i == 2020) ? "<b><font color=\"indianred\">" : "";
-        var be = (i == 2020) ? "</font></b>" : "";
+        var bb = (i == TargetYear) ? "<b><font color=\"indianred\">" : "";
+        var be = (i == TargetYear) ? "</font></b>" : "";
 
         html = html + "<td bgcolor=\"" + bg + "\" align=\"right\">" +
                       "<b><font size=\"-2\">" +
@@ -293,7 +295,7 @@ distribute_amortization = function(confs, amort)
 {
     for (var i = 0; i < confs.length; i++)
     {
-        confs[i].Amort2020 = 0.0;
+        confs[i].Amort2021 = 0.0;
     }
 
     // Ходим по таблице амортизации, вытаскиваем строки и распределяем по системам.
@@ -307,17 +309,17 @@ distribute_amortization = function(confs, amort)
         var distr_weights = distr_confs.map(c => c.FullNodeHoursWeight);
         var distr_weights_sum = distr_weights.Sum();
         distr_weights = distr_weights.map(w => w / distr_weights_sum);
-        var value = line.Bank.GetYear(2020);
+        var value = line.Bank.GetYear(TargetYear);
         for (var j = 0; j < distr_confs.length; j++)
         {
-            distr_confs[j].Amort2020 = distr_confs[j].Amort2020 + (distr_weights[j] * value);
+            distr_confs[j].Amort2021 = distr_confs[j].Amort2021 + (distr_weights[j] * value);
         }
     }
 
     // Амортизация на узлочас.
     for (var i = 0; i < confs.length; i++)
     {
-        confs[i].NodeHourAmort2020 = confs[i].Amort2020 / confs[i].FullNodeHours;
+        confs[i].NodeHourAmort2020 = confs[i].Amort2021 / confs[i].FullNodeHours;
     }
 }
 
