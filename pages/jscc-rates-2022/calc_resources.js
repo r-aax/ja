@@ -53,22 +53,27 @@ CalcNodesConfigurationTable = function()
 
     var ex = 0.7;
 
-    var tr_k  = (16.0 / 16.0) * (2.9 / 3.0);
-    var hw_k  = (28.0 / 16.0) * (2.6 / 3.0);
-    var bw_k  = (32.0 / 16.0) * (2.6 / 3.0);
-    var knl_k = (72.0 / 16.0) * (1.5 / 3.0);
-    var sl_k  = (36.0 / 16.0) * (3.0 / 3.0);
-    var cl_k  = (48.0 / 16.0) * (3.0 / 3.0);
+    var target_cores = 16.0
+    var target_freq = 3.0
+    
+    // Нормировка полезности на 16 ядер по 3.0 ГГц.
+    var tr_k  = (16.0 / target_cores) * (2.9 / target_freq);
+    var hw_k  = (28.0 / target_cores) * (2.6 / target_freq);
+    var bw_k  = (32.0 / target_cores) * (2.6 / target_freq);
+    var knl_k = (72.0 / target_cores) * (1.5 / target_freq);
+    var sl_k  = (36.0 / target_cores) * (3.0 / target_freq);
+    var cl_k  = (48.0 / target_cores) * (3.0 / target_freq);
 
     var table =
     [
-        // 1/3 от KNC.
-        new CalcNodeConfiguration(1,   "tr", "Tornado",         tr_k,  (2 * (0.135 + 0.3/3.0)) * 1.20 / ex),
-        new CalcNodeConfiguration(1,   "hw", "Haswell",         hw_k,  (2 * (      0.145)) * 1.06 / ex),
-        new CalcNodeConfiguration(1,   "bw", "Broadwell",       bw_k,  (2 * (      0.145)) * 1.06 / ex),
-        new CalcNodeConfiguration(1,  "knl", "Knights Landing", knl_k, (1 * (      0.245)) * 1.06 / ex),
-        new CalcNodeConfiguration(1,   "sl", "Skylake",         sl_k,  (2 * (      0.200)) * 1.06 / ex),
-        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    cl_k,  (2 * (      0.205)) * 1.06 / ex)
+        // Вообще убираем KNC из Торнадо.
+        new CalcNodeConfiguration(1,   "tr", "Tornado",         tr_k,  (2 * 0.135) * 1.20 / ex),
+
+        new CalcNodeConfiguration(1,   "hw", "Haswell",         hw_k,  (2 * 0.145) * 1.06 / ex),
+        new CalcNodeConfiguration(1,   "bw", "Broadwell",       bw_k,  (2 * 0.145) * 1.06 / ex),
+        new CalcNodeConfiguration(1,  "knl", "Knights Landing", knl_k, (1 * 0.245) * 1.06 / ex),
+        new CalcNodeConfiguration(1,   "sl", "Skylake",         sl_k,  (2 * 0.200) * 1.06 / ex),
+        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    cl_k,  (2 * 0.205) * 1.06 / ex)
     ];
 
     // Отбираем только разрешенные конфигурации.
@@ -120,9 +125,9 @@ get_calc_nodes_configuration_table_HTML = function(t)
         head = head + "<th bgcolor=\"" + bg + "\">узлочасы</th>";
         head = head + "<th bgcolor=\"" + bg + "\">вес</th>";
     }
-    if (t[0].Amort2021 != undefined)
+    if (t[0].Amort2022 != undefined)
     {
-        head = head + "<th bgcolor=\"" + bg + "\">ам. 2021</th>";
+        head = head + "<th bgcolor=\"" + bg + "\">ам. 2022</th>";
         head = head + "<th bgcolor=\"" + bg_money + "\">ам. у*ч</th>";
     }
     if (t[0].EnergyCost != undefined)
@@ -175,12 +180,12 @@ get_calc_nodes_configuration_table_HTML = function(t)
                           conf.FullNodeHoursWeight.toFixed(3) + "</td>";
                 }
 
-                if (conf.Amort2021 != undefined)
+                if (conf.Amort2022 != undefined)
                 {
                     res = res + "<td bgcolor=\"" + bg + "\" align=\"right\">" +
-                          conf.Amort2021.toLocaleString() + "</td>";
+                          conf.Amort2022.toLocaleString() + "</td>";
                     res = res + "<td bgcolor=\"" + bg_money + "\" align=\"right\">" +
-                          conf.NodeHourAmort2021.toLocaleString() + "</td>";
+                          conf.NodeHourAmort2022.toLocaleString() + "</td>";
                 }
 
                 if (conf.EnergyCost != undefined)
@@ -337,10 +342,7 @@ calculate_energy_costs = function(confs)
 // Вычисление затрат на ремонт.
 calculate_repair_costs = function(confs)
 {
-    // No repair cost.
     confs.forEach(c => c.RepairCost = 0.0);
-    confs.filter(c => c.Name == "hw")[0].RepairCost = 45000.0 / (365.0 * 24.0);
-    confs.filter(c => c.Name == "bw")[0].RepairCost = 45000.0 / (365.0 * 24.0);
 }
 
 // Другие затраты.
@@ -359,7 +361,7 @@ calculate_other_costs = function(confs, tot)
 // Суммирование всех затрат.
 summarize_all_costs = function(confs)
 {
-    confs.forEach(c => c.SumCost = c.NodeHourAmort2021 + c.EnergyCost + c.RepairCost + c.OtherCost);
+    confs.forEach(c => c.SumCost = c.NodeHourAmort2022 + c.EnergyCost + c.RepairCost + c.OtherCost);
     confs.forEach(c => c.Rate = c.SumCost * 1.15);
 }
 

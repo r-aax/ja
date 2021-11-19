@@ -1,6 +1,6 @@
 // Амортизация вычислительных систем.
 
-var TargetYear = 2021;
+var TargetYear = 2022;
 
 //==================================================================================================
 
@@ -209,7 +209,7 @@ get_amortization_table_HTML = function(t)
     var bg = "#DDDDDD";
     var bg2 = "#F5F5F5";
     var year_from = 2016;
-    var year_to = 2025;
+    var year_to = 2026;
 
     head = head + "<tr>";
     head = head + "<th bgcolor=\"" + bg + "\">узлы</th>";
@@ -295,7 +295,7 @@ distribute_amortization = function(confs, amort)
 {
     for (var i = 0; i < confs.length; i++)
     {
-        confs[i].Amort2021 = 0.0;
+        confs[i].Amort2022 = 0.0;
     }
 
     // Ходим по таблице амортизации, вытаскиваем строки и распределяем по системам.
@@ -312,14 +312,14 @@ distribute_amortization = function(confs, amort)
         var value = line.Bank.GetYear(TargetYear);
         for (var j = 0; j < distr_confs.length; j++)
         {
-            distr_confs[j].Amort2021 = distr_confs[j].Amort2021 + (distr_weights[j] * value);
+            distr_confs[j].Amort2022 = distr_confs[j].Amort2022 + (distr_weights[j] * value);
         }
     }
 
     // Амортизация на узлочас.
     for (var i = 0; i < confs.length; i++)
     {
-        confs[i].NodeHourAmort2021 = confs[i].Amort2021 / confs[i].FullNodeHours;
+        confs[i].NodeHourAmort2022 = confs[i].Amort2022 / confs[i].FullNodeHours;
     }
 }
 
