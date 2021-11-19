@@ -53,14 +53,22 @@ CalcNodesConfigurationTable = function()
 
     var ex = 0.7;
 
+    var tr_k  = (16.0 / 16.0) * (2.9 / 3.0);
+    var hw_k  = (28.0 / 16.0) * (2.6 / 3.0);
+    var bw_k  = (32.0 / 16.0) * (2.6 / 3.0);
+    var knl_k = (72.0 / 16.0) * (1.5 / 3.0);
+    var sl_k  = (36.0 / 16.0) * (3.0 / 3.0);
+    var cl_k  = (48.0 / 16.0) * (3.0 / 3.0);
+
     var table =
     [
-        new CalcNodeConfiguration(1,   "tr", "Tornado",         0.50, (2 * (0.135 + 0.3)) * 1.20 / ex),
-        new CalcNodeConfiguration(1,   "hw", "Haswell",         1.00, (2 * (      0.145)) * 1.06 / ex),
-        new CalcNodeConfiguration(1,   "bw", "Broadwell",       1.00, (2 * (      0.145)) * 1.06 / ex),
-        new CalcNodeConfiguration(1,  "knl", "Knights Landing", 1.00, (1 * (      0.245)) * 1.06 / ex),
-        new CalcNodeConfiguration(1,   "sl", "Skylake",         1.00, (2 * (      0.200)) * 1.06 / ex),
-        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    1.00, (2 * (      0.205)) * 1.06 / ex)
+        // 1/3 от KNC.
+        new CalcNodeConfiguration(1,   "tr", "Tornado",         tr_k,  (2 * (0.135 + 0.3/3.0)) * 1.20 / ex),
+        new CalcNodeConfiguration(1,   "hw", "Haswell",         hw_k,  (2 * (      0.145)) * 1.06 / ex),
+        new CalcNodeConfiguration(1,   "bw", "Broadwell",       bw_k,  (2 * (      0.145)) * 1.06 / ex),
+        new CalcNodeConfiguration(1,  "knl", "Knights Landing", knl_k, (1 * (      0.245)) * 1.06 / ex),
+        new CalcNodeConfiguration(1,   "sl", "Skylake",         sl_k,  (2 * (      0.200)) * 1.06 / ex),
+        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    cl_k,  (2 * (      0.205)) * 1.06 / ex)
     ];
 
     // Отбираем только разрешенные конфигурации.
@@ -153,7 +161,7 @@ get_calc_nodes_configuration_table_HTML = function(t)
                           conf.Description +
                           "</td>" +
                           "<td bgcolor=\"" + bg + "\">" +
-                          conf.Usefull +
+                          conf.Usefull.toLocaleString() +
                           "</td>" +
                           "<td bgcolor=\"" + bg + "\">" +
                           conf.Energy.toFixed(3) +
@@ -331,6 +339,8 @@ calculate_repair_costs = function(confs)
 {
     // No repair cost.
     confs.forEach(c => c.RepairCost = 0.0);
+    confs.filter(c => c.Name == "hw")[0].RepairCost = 45000.0 / (365.0 * 24.0);
+    confs.filter(c => c.Name == "bw")[0].RepairCost = 45000.0 / (365.0 * 24.0);
 }
 
 // Другие затраты.

@@ -41,7 +41,7 @@ function on_load()
         get_calc_nodes_configuration_table_HTML(calc_nodes_conf_table);
 
     // Таблица амортизации.
-    var amort_table = AmortizationTable();
+    var amort_table = AmortizationTable(calc_nodes_conf_table);
     //calculate_amortization(amort_table);
     document.getElementById("amortization_table_div").innerHTML =
         get_amortization_table_HTML(amort_table);
@@ -85,6 +85,8 @@ function on_load()
 
     <!-- Основная таблица. -->
     <table class="sketch">
+
+    <center><h2>Расчет тарифов на вычислительные ресурсы МСЦ РАН в 2021 г.<h2></center>
 
         <!-- Вычислительные ресурсы. -->
         <tr height="25px">
