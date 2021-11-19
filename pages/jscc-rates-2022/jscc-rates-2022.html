@@ -1,0 +1,169 @@
+<!--
+JA
+-->
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="content-style-type" content="text/css">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link rel="stylesheet" href="style.css" type="text/css" title="default" media="screen">
+    <title>Тарифы МСЦ РАН 2021</title>
+    <script type="text/javascript" language="JavaScript" src="../../js/Func.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../../js/FTree.js"></script>
+    <script type="text/javascript" language="JavaScript" src="calc_resources.js"></script>
+    <script type="text/javascript" language="JavaScript" src="amortization.js"></script>
+    <script type="text/javascript" language="JavaScript" src="private_data.js"></script>
+
+<script type="text/javascript" language="JavaScript">
+<!--
+// Загрузка страницы.
+function on_load()
+{
+    // Конфигурация вычислительных узлов.
+    var calc_nodes_conf_table = CalcNodesConfigurationTable();
+    document.getElementById("calc_nodes_conf_div").innerHTML =
+        get_calc_nodes_configuration_table_HTML(calc_nodes_conf_table);
+
+    // Состав вычислительного поля.
+    var calc_segments_sched_table = CalcSegmentsScheduleTable();
+    document.getElementById("calc_segments_sched_div").innerHTML =
+        get_calc_segments_schedule_table_HTML(calc_segments_sched_table);
+
+    // Теперь считаем полное количество узлочасов каждого типа.
+    calculate_full_node_hours(calc_nodes_conf_table, calc_segments_sched_table);
+    // А дальше сразу выводим таблицу с конфигурацией еще раз.
+    document.getElementById("calc_nodes_conf_div2").innerHTML =
+        get_calc_nodes_configuration_table_HTML(calc_nodes_conf_table);
+
+    // Таблица амортизации.
+    var amort_table = AmortizationTable(calc_nodes_conf_table);
+    //calculate_amortization(amort_table);
+    document.getElementById("amortization_table_div").innerHTML =
+        get_amortization_table_HTML(amort_table);
+
+    // Распределяем амортизацию и выводим таблицу еще раз.
+    distribute_amortization(calc_nodes_conf_table, amort_table);
+    document.getElementById("calc_nodes_conf_div3").innerHTML =
+        get_calc_nodes_configuration_table_HTML(calc_nodes_conf_table);
+
+    // Вычисление других затрат.
+    calculate_energy_costs(calc_nodes_conf_table);
+    calculate_repair_costs(calc_nodes_conf_table);
+    calculate_other_costs(calc_nodes_conf_table, other_costs());
+    summarize_all_costs(calc_nodes_conf_table);
+    document.getElementById("calc_nodes_conf_div4").innerHTML =
+        get_calc_nodes_configuration_table_HTML(calc_nodes_conf_table);
+
+    // Справка в total.
+    nh = calc_nodes_conf_table.map(c => c.FullNodeHours);
+    am = calc_nodes_conf_table.map(c => c.NodeHourAmort2021);
+    ee = calc_nodes_conf_table.map(c => c.EnergyCost);
+    rp = calc_nodes_conf_table.map(c => c.RepairCost);
+    ot = calc_nodes_conf_table.map(c => c.OtherCost);
+    am = JA.Func.ZipWith(nh, am, (a, b) => a * b).Sum();
+    ee = JA.Func.ZipWith(nh, ee, (a, b) => a * b).Sum();
+    rp = JA.Func.ZipWith(nh, rp, (a, b) => a * b).Sum();
+    ot = JA.Func.ZipWith(nh, ot, (a, b) => a * b).Sum();
+    document.getElementById("total_div").innerHTML =
+        "Всего амортизации     : " + am.toLocaleString() + "<br>" +
+        "Всего электроэнергии  : " + ee.toLocaleString() + "<br>" +
+        "Всего ремонт узлов    : " + rp.toLocaleString() + "<br>" +
+        "Всего других расходов : " + ot.toLocaleString() + "<br>" +
+        "Всего суммарно        : " + (am + ee + rp + ot).toLocaleString() + "<br>";
+}
+-->
+</script>
+
+</head>
+
+<body onload="on_load()">
+
+    <!-- Основная таблица. -->
+    <table class="sketch">
+
+    <center><h2>Расчет тарифов на вычислительные ресурсы МСЦ РАН в 2021 г.<h2></center>
+
+        <!-- Вычислительные ресурсы. -->
+        <tr height="25px">
+            <td class="section">
+                <center><i>Конфигурация вычислительных узлов</i></center>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="calc_nodes_conf_div"></div>
+            </td>
+        </tr>
+        <tr height="25px">
+            <td class="section">
+                <center><i>Конфигурация вычислительного поля на 2021-й год</i></center>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="calc_segments_sched_div"></div>
+            </td>
+        </tr>
+        <tr height="25px">
+            <td class="section">
+                <center><i>Конфигурация вычислительных узлов с подсчетом полного количества узлочасов</i></center>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="calc_nodes_conf_div2"></div>
+            </td>
+        </tr>
+
+        <!-- Таблица амортизациии. -->
+        <tr height="25px">
+            <td class="section">
+                <center><i>Таблица амортизации</i></center>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="amortization_table_div"></div>
+            </td>
+        </tr>
+        <tr height="25px">
+            <td class="section">
+                <center><i>Распределение амортизации по вычислительным узлам</i></center>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="calc_nodes_conf_div3"></div>
+            </td>
+        </tr>
+
+        <!-- Остальные затраты. -->
+        <tr height="25px">
+            <td class="section">
+                <center><i>Вычисление других затрат</i></center>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="calc_nodes_conf_div4"></div>
+            <td>
+        </tr>
+        <tr>
+            <td>
+                <div id="total_div"></div>
+            <td>
+        </tr>
+
+        <!-- Футер. -->
+        <tr><td class="section"><img src="../../pics/pix.gif" height="20px"></td></tr>
+
+    </table>
+
+</body>
+
+</html>
