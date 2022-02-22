@@ -11,6 +11,7 @@
 //    knl - Knights Landing
 //     sl - Skylake
 //     cl - Cascade Lake
+//   a100 - NVIDIA A100
 
 //==================================================================================================
 
@@ -49,6 +50,10 @@ CalcNodesConfigurationTable = function()
      * [cl]:
      * https://ark.intel.com/content/www/ru/ru/ark/products/192481/intel-xeon-platinum-8268-processor-35-75m-cache-2-90-ghz.html
      * https://ark.intel.com/content/www/us/en/ark/products/199351/intel-xeon-gold-6248r-processor-35-75m-cache-3-00-ghz.html
+     *
+     * [a100]:
+     * https://ark.intel.com/content/www/ru/ru/ark/products/212289/intel-xeon-platinum-8368q-processor-57m-cache-2-60-ghz.html
+     * https://www.nvidia.com/content/dam/en-zz/Solutions/Data-Center/a100/pdf/A100-PCIE-Prduct-Brief.pdf
      */
 
     var ex = 0.7;
@@ -63,17 +68,19 @@ CalcNodesConfigurationTable = function()
     var knl_k = (72.0 / target_cores) * (1.5 / target_freq);
     var sl_k  = (36.0 / target_cores) * (3.0 / target_freq);
     var cl_k  = (48.0 / target_cores) * (3.0 / target_freq);
+    var a100_k = 8.0 * cl_k;
 
     var table =
     [
         // Вообще убираем KNC из Торнадо.
-        new CalcNodeConfiguration(1,   "tr", "Tornado",         tr_k,  (2 * 0.135) * 1.20 / ex),
+        new CalcNodeConfiguration(1,   "tr", "Tornado",         tr_k,   (2 * 0.135) * 1.20 / ex),
 
-        new CalcNodeConfiguration(1,   "hw", "Haswell",         hw_k,  (2 * 0.145) * 1.06 / ex),
-        new CalcNodeConfiguration(1,   "bw", "Broadwell",       bw_k,  (2 * 0.145) * 1.06 / ex),
-        new CalcNodeConfiguration(1,  "knl", "Knights Landing", knl_k, (1 * 0.245) * 1.06 / ex),
-        new CalcNodeConfiguration(1,   "sl", "Skylake",         sl_k,  (2 * 0.200) * 1.06 / ex),
-        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    cl_k,  (2 * 0.205) * 1.06 / ex)
+        new CalcNodeConfiguration(1,   "hw", "Haswell",         hw_k,   (2 * 0.145) * 1.06 / ex),
+        new CalcNodeConfiguration(1,   "bw", "Broadwell",       bw_k,   (2 * 0.145) * 1.06 / ex),
+        new CalcNodeConfiguration(1,  "knl", "Knights Landing", knl_k,  (1 * 0.245) * 1.06 / ex),
+        new CalcNodeConfiguration(1,   "sl", "Skylake",         sl_k,   (2 * 0.200) * 1.06 / ex),
+        new CalcNodeConfiguration(1,   "cl", "Cascade Lake",    cl_k,   (2 * 0.205) * 1.06 / ex),
+        new CalcNodeConfiguration(1, "a100", "NVIDIA A100",     a100_k, (2 * (0.27 + 0.25) ) * 1.06 / ex)
     ];
 
     // Отбираем только разрешенные конфигурации.
