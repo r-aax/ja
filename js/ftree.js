@@ -69,7 +69,7 @@ JA.FTree.Tree.prototype.ChildEdge = function(i)
 }
 JA.FTree.Tree.prototype.Child = function(i)
 {
-    return this.ChildEdge().Succ;
+    return this.ChildEdge(i).Succ;
 }
 JA.FTree.Tree.prototype.Children = function()
 {
